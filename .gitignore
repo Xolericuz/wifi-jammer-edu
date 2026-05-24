@@ -1,0 +1,7 @@
+*.mp3
+*.mp4
+*.wav
+*.zip
+.DS_Store
+Thumbs.db
+node_modules/
