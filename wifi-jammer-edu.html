@@ -2,373 +2,128 @@
 <html lang="uz">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>RF Interference Simulator v2.0 — Ta'lim Platformasi</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RF Interference Simulator 2.0</title>
 <style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#030508;color:#c8dde8;font-family:'JetBrains Mono',monospace}
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;600;800&display=swap');
 
-:root {
-  --bg0: #030508;
-  --bg1: #080d14;
-  --bg2: #0d1520;
-  --bg3: #111d2e;
-  --border: rgba(0,200,120,0.15);
-  --border2: rgba(0,200,120,0.08);
-  --green: #00e87a;
-  --green2: #00ff99;
-  --cyan: #00cfff;
-  --red: #ff3c5a;
-  --orange: #ff8c00;
-  --yellow: #ffd700;
-  --purple: #bd93f9;
-  --dim: rgba(0,232,122,0.5);
-  --text: #c8dde8;
-  --text2: #5a7a8a;
-  --mono: 'JetBrains Mono', monospace;
-  --sans: 'Syne', sans-serif;
-  --hdr: 52px;
-  --sidebar: 300px;
-  --panel: 280px;
-}
+:root{--bg0:#030508;--bg1:#080d14;--bg2:#0d1520;--bg3:#111d2e;--border:rgba(0,200,120,0.15);--border2:rgba(0,200,120,0.08);--green:#00e87a;--green2:#00ff99;--cyan:#00cfff;--red:#ff3c5a;--orange:#ff8c00;--yellow:#ffd700;--purple:#bd93f9;--text:#c8dde8;--text2:#5a7a8a;--hdr:48px;--sidebar:280px;--panel:260px}
 
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-html, body { width:100%; height:100%; overflow:hidden; }
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-track{background:var(--bg0)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 
-::-webkit-scrollbar { width:3px; height:3px; }
-::-webkit-scrollbar-track { background:var(--bg0); }
-::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+body{display:flex;flex-direction:column}
 
-body {
-  background: var(--bg0);
-  color: var(--text);
-  font-family: var(--mono);
-  display: flex;
-  flex-direction: column;
-}
+#hdr{height:var(--hdr);background:var(--bg1);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 12px;gap:8px;flex-shrink:0;z-index:100;user-select:none}
+#hdr .logo{font-family:'Syne',sans-serif;font-size:clamp(.7rem,2vw,.9rem);font-weight:800;letter-spacing:2px;color:var(--green);text-shadow:0 0 20px var(--green);white-space:nowrap}
+#hdr .sep{flex:1}
+.hdr-tag{font-size:.5rem;letter-spacing:2px;padding:2px 8px;border-radius:2px;white-space:nowrap}
+.hdr-tag.edu{border:1px solid var(--cyan);color:var(--cyan)}
+.hdr-tag.warn{border:1px solid var(--red);color:var(--red);animation:blink 1.6s ease infinite}
+.hdr-tag.v2{border:1px solid var(--purple);color:var(--purple);background:rgba(189,147,249,0.08)}
+@keyframes blink{50%{opacity:.25}}
+#menuBtn{display:none;background:none;border:1px solid var(--border);color:var(--green);padding:4px 8px;font-size:.85rem;cursor:pointer;border-radius:3px}
 
-#hdr {
-  height: var(--hdr);
-  background: var(--bg1);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  padding: 0 16px;
-  gap: 12px;
-  flex-shrink: 0;
-  z-index: 100;
-  user-select: none;
-}
-#hdr .logo {
-  font-family: var(--sans);
-  font-size: clamp(.75rem, 2vw, .95rem);
-  font-weight: 800;
-  letter-spacing: 2px;
-  color: var(--green);
-  text-shadow: 0 0 20px var(--green);
-  white-space: nowrap;
-}
-#hdr .sep { flex: 1; }
-.hdr-tag {
-  font-size: .55rem;
-  letter-spacing: 2px;
-  padding: 3px 9px;
-  border-radius: 2px;
-  white-space: nowrap;
-}
-.hdr-tag.edu { border:1px solid var(--cyan); color:var(--cyan); }
-.hdr-tag.warn {
-  border:1px solid var(--red); color:var(--red);
-  animation: blink 1.6s ease infinite;
-}
-.hdr-tag.v2 {
-  border:1px solid var(--purple); color:var(--purple);
-  background: rgba(189,147,249,0.08);
-}
-@keyframes blink { 50%{opacity:.25;} }
-#menuBtn { display:none; background:none; border:1px solid var(--border); color:var(--green); padding:6px 10px; font-size:.9rem; cursor:pointer; border-radius:3px; }
+#shell{flex:1;display:flex;overflow:hidden;position:relative}
 
-#shell { flex:1; display:flex; overflow:hidden; position:relative; }
+#sidebar{width:var(--sidebar);background:var(--bg1);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;transition:transform .3s}
+#sidebar .sb-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-tab{flex:1;padding:8px 4px;font-size:.5rem;letter-spacing:1.5px;text-align:center;background:none;border:none;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:color .2s,border-color .2s;font-family:inherit}
+.sb-tab.active{color:var(--green);border-color:var(--green)}
+.sb-content{flex:1;overflow-y:auto;padding:10px;font-size:.6rem}
 
-#sidebar {
-  width: var(--sidebar);
-  background: var(--bg1);
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  overflow: hidden;
-  transition: transform .3s ease;
-}
-#sidebar .sb-tabs { display:flex; border-bottom:1px solid var(--border); flex-shrink:0; }
-.sb-tab {
-  flex:1;
-  padding: 10px 4px;
-  font-family: var(--mono);
-  font-size: .55rem;
-  letter-spacing: 1.5px;
-  text-align: center;
-  background: none;
-  border: none;
-  color: var(--text2);
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: color .2s, border-color .2s;
-}
-.sb-tab.active { color: var(--green); border-color: var(--green); }
-.sb-content { flex:1; overflow-y:auto; padding: 12px; }
+#center{flex:1;position:relative;overflow:hidden;background:var(--bg0)}
+#threeCanvas{display:block;width:100%!important;height:100%!important}
 
-#center { flex:1; position:relative; overflow:hidden; background:var(--bg0); }
-#threeCanvas { display:block; width:100% !important; height:100% !important; }
+.c-overlay{position:absolute;pointer-events:none}
+#c-tl{top:10px;left:10px;font-size:.55rem;color:var(--cyan);opacity:.7;line-height:1.7}
+#c-br{bottom:10px;right:10px;font-size:.5rem;color:var(--text2);text-align:right;line-height:1.6}
+#c-status{top:10px;right:10px;display:flex;gap:6px;align-items:center;pointer-events:none}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--text2);transition:background .3s,box-shadow .3s}
+.status-dot.live{background:var(--red);box-shadow:0 0 8px var(--red);animation:pulse-dot 1s infinite}
+@keyframes pulse-dot{50%{opacity:.4}}
+#c-status span{font-size:.5rem;color:var(--text2)}
 
-.c-overlay { position:absolute; pointer-events:none; font-family:var(--mono); }
-#c-tl { top:12px; left:12px; font-size:.58rem; color:var(--cyan); opacity:.7; line-height:1.7; }
-#c-br {
-  bottom:12px; right:12px;
-  font-size:.52rem; color:var(--text2);
-  text-align:right; line-height:1.6;
-}
-#c-status {
-  top:12px; right:12px;
-  display:flex; gap:8px; align-items:center;
-  pointer-events:none;
-}
-.status-dot {
-  width:7px; height:7px;
-  border-radius:50%;
-  background: var(--text2);
-  transition: background .3s, box-shadow .3s;
-}
-.status-dot.live {
-  background: var(--red);
-  box-shadow: 0 0 8px var(--red);
-  animation: pulse-dot 1s infinite;
-}
-@keyframes pulse-dot { 50%{opacity:.4;} }
-#c-status span { font-size:.55rem; color:var(--text2); }
+#spectrum-wrap{position:absolute;bottom:0;left:0;right:0;height:60px;pointer-events:none}
+#specCanvas{display:block;width:100%;height:100%}
 
-#spectrum-wrap {
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 70px;
-  pointer-events: none;
-}
-#specCanvas { display:block; width:100%; height:100%; }
+#rpanel{width:var(--panel);background:var(--bg1);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;transition:transform .3s}
+.rp-section{border-bottom:1px solid var(--border2);padding:10px;flex-shrink:0}
+.rp-title{font-family:'Syne',sans-serif;font-size:.55rem;letter-spacing:2px;color:var(--cyan);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.rp-title::before{content:'';width:3px;height:10px;background:var(--cyan);display:block}
+#log-wrap{flex:1;overflow-y:auto;padding:8px 10px}
+.log-line{font-size:.55rem;line-height:1.8}
+.log-line.ok{color:var(--green)}
+.log-line.warn{color:var(--orange)}
+.log-line.err{color:var(--red)}
+.log-line.info{color:var(--cyan)}
+.log-line.dim{color:var(--text2)}
 
-#rpanel {
-  width: var(--panel);
-  background: var(--bg1);
-  border-left: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  transition: transform .3s ease;
-}
-.rp-section { border-bottom:1px solid var(--border2); padding:12px; flex-shrink:0; }
-.rp-title {
-  font-family:var(--sans);
-  font-size:.58rem; letter-spacing:2px;
-  color:var(--cyan); margin-bottom:10px;
-  display:flex; align-items:center; gap:6px;
-}
-.rp-title::before {
-  content:''; width:3px; height:10px;
-  background:var(--cyan); display:block;
-}
-#log-wrap { flex:1; overflow-y:auto; padding:10px 12px; }
-.log-line { font-size:.6rem; line-height:1.85; }
-.log-line.ok   { color:var(--green); }
-.log-line.warn { color:var(--orange); }
-.log-line.err  { color:var(--red); }
-.log-line.info { color:var(--cyan); }
-.log-line.dim  { color:var(--text2); }
+.ctrl-group{margin-bottom:12px}
+.ctrl-label{font-size:.55rem;color:var(--text2);margin-bottom:3px;display:flex;justify-content:space-between;align-items:center}
+.ctrl-val{color:var(--green)}
 
-.ctrl-group { margin-bottom: 14px; }
-.ctrl-label {
-  font-size:.58rem; color:var(--text2);
-  margin-bottom:4px; display:flex;
-  justify-content:space-between; align-items:center;
-}
-.ctrl-val { color:var(--green); }
+input[type=range]{-webkit-appearance:none;width:100%;height:3px;background:var(--bg3);border-radius:2px;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:3px;border-radius:2px}
 
-input[type=range] {
-  -webkit-appearance: none;
-  width:100%; height:3px;
-  background: var(--bg3);
-  border-radius:2px; outline:none;
-  cursor:pointer;
-}
-input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance:none;
-  width:13px; height:13px;
-  border-radius:50%;
-  background:var(--green);
-  box-shadow:0 0 6px var(--green);
-  cursor:pointer;
-}
-input[type=range]::-webkit-slider-runnable-track { height:3px; border-radius:2px; }
+.btn-row{display:flex;gap:5px;margin-top:8px}
+.btn{flex:1;padding:8px 4px;font-size:.55rem;letter-spacing:1.5px;text-align:center;background:transparent;cursor:pointer;border-radius:3px;border:1px solid;transition:background .15s,box-shadow .15s;font-family:inherit}
+.btn-green{border-color:var(--green);color:var(--green)}
+.btn-green:hover{background:rgba(0,232,122,.12)}
+.btn-red{border-color:var(--red);color:var(--red)}
+.btn-red:hover{background:rgba(255,60,90,.12)}
+.btn-cyan{border-color:var(--cyan);color:var(--cyan)}
+.btn-cyan:hover{background:rgba(0,207,255,.12)}
+.btn-purple{border-color:var(--purple);color:var(--purple)}
+.btn-purple:hover{background:rgba(189,147,249,.12)}
 
-.btn-row { display:flex; gap:6px; margin-top:10px; }
-.btn {
-  flex:1; padding:9px 4px;
-  font-family:var(--mono); font-size:.6rem;
-  letter-spacing:1.5px; text-align:center;
-  background:transparent; cursor:pointer;
-  border-radius:3px; border:1px solid;
-  transition:background .15s, box-shadow .15s;
-}
-.btn-green { border-color:var(--green); color:var(--green); }
-.btn-green:hover { background:rgba(0,232,122,.12); box-shadow:0 0 10px rgba(0,232,122,.3); }
-.btn-red { border-color:var(--red); color:var(--red); }
-.btn-red:hover { background:rgba(255,60,90,.12); box-shadow:0 0 10px rgba(255,60,90,.3); }
-.btn-cyan { border-color:var(--cyan); color:var(--cyan); }
-.btn-cyan:hover { background:rgba(0,207,255,.12); }
-.btn-purple { border-color:var(--purple); color:var(--purple); }
-.btn-purple:hover { background:rgba(189,147,249,.12); }
+select{width:100%;padding:6px 8px;background:var(--bg2);color:var(--text);border:1px solid var(--border);border-radius:3px;font-size:.58rem;cursor:pointer;outline:none;font-family:inherit}
+select:focus{border-color:var(--green)}
 
-select {
-  width:100%; padding:7px 10px;
-  background:var(--bg2); color:var(--text);
-  border:1px solid var(--border); border-radius:3px;
-  font-family:var(--mono); font-size:.62rem;
-  cursor:pointer; outline:none;
-}
-select:focus { border-color:var(--green); }
+.toggle-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.toggle-label{font-size:.55rem;color:var(--text2)}
+.toggle{position:relative;width:30px;height:16px;cursor:pointer;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-track{position:absolute;inset:0;background:var(--bg3);border-radius:20px;border:1px solid var(--border);transition:background .2s}
+.toggle input:checked~.toggle-track{background:#004422;border-color:var(--green)}
+.toggle-thumb{position:absolute;top:2px;left:2px;width:10px;height:10px;background:var(--text2);border-radius:50%;transition:.2s}
+.toggle input:checked~.toggle-thumb{transform:translateX(14px);background:var(--green);box-shadow:0 0 6px var(--green)}
 
-.toggle-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
-.toggle-label { font-size:.6rem; color:var(--text2); }
-.toggle { position:relative; width:32px; height:17px; cursor:pointer; }
-.toggle input { opacity:0; width:0; height:0; }
-.toggle-track {
-  position:absolute; inset:0;
-  background:var(--bg3); border-radius:20px;
-  border:1px solid var(--border);
-  transition:background .2s;
-}
-.toggle input:checked ~ .toggle-track { background:#004422; border-color:var(--green); }
-.toggle-thumb {
-  position:absolute; top:2px; left:2px;
-  width:11px; height:11px;
-  background:var(--text2); border-radius:50%;
-  transition:.2s;
-}
-.toggle input:checked ~ .toggle-thumb {
-  transform:translateX(15px);
-  background:var(--green);
-  box-shadow:0 0 6px var(--green);
-}
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.metric-card{background:var(--bg2);border:1px solid var(--border2);border-radius:4px;padding:6px}
+.metric-card .mc-label{font-size:.48rem;color:var(--text2);margin-bottom:2px}
+.metric-card .mc-val{font-size:.85rem;color:var(--green);font-weight:700}
+.metric-card .mc-unit{font-size:.45rem;color:var(--text2)}
 
-.ap-item {
-  display:flex; align-items:center; gap:8px;
-  padding:7px 0; border-bottom:1px solid var(--border2);
-  font-size:.6rem;
-}
-.ap-icon {
-  width:24px; height:24px;
-  border-radius:4px;
-  display:grid; place-items:center;
-  font-size:.8rem; flex-shrink:0;
-  border:1px solid var(--border);
-  background:var(--bg2);
-  transition:border-color .3s, background .3s;
-}
-.ap-icon.jammed { border-color:var(--red); background:#1a0008; }
-.ap-icon.ok     { border-color:var(--green); }
-.ap-info { flex:1; min-width:0; }
-.ap-ssid { color:var(--text); font-size:.6rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.ap-mac  { color:var(--text2); font-size:.53rem; }
-.ap-sig  { font-size:.58rem; text-align:right; }
-.ap-sig.good { color:var(--green); }
-.ap-sig.bad  { color:var(--red); }
+#chart-wrap{width:100%;height:80px;margin-top:10px}
+#chartCanvas{width:100%;height:100%;display:block}
 
-.code-block {
-  background:var(--bg0); border:1px solid var(--border2);
-  border-radius:4px; padding:10px;
-  font-size:.58rem; line-height:1.7;
-  color:#7ab; overflow-x:auto;
-  margin-bottom:10px;
-}
-.code-block .kw  { color:#ff79c6; }
-.code-block .fn  { color:#50fa7b; }
-.code-block .cm  { color:#44607a; }
-.code-block .str { color:#f1fa8c; }
-.code-block .num { color:#bd93f9; }
+#mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:150}
 
-.metric-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
-.metric-card {
-  background:var(--bg2); border:1px solid var(--border2);
-  border-radius:4px; padding:8px;
-}
-.metric-card .mc-label { font-size:.52rem; color:var(--text2); margin-bottom:2px; }
-.metric-card .mc-val { font-size:.9rem; color:var(--green); font-weight:700; }
-.metric-card .mc-unit { font-size:.5rem; color:var(--text2); }
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:999;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal-box{background:var(--bg1);border:1px solid var(--red);border-radius:6px;max-width:480px;width:100%;padding:24px 20px;box-shadow:0 0 40px rgba(255,60,90,.3)}
+.modal-box h2{font-family:'Syne',sans-serif;font-size:.9rem;letter-spacing:3px;color:var(--red);margin-bottom:14px;text-align:center}
+.modal-box p{font-size:.6rem;color:var(--text2);line-height:1.8;margin-bottom:8px}
+.modal-box p strong{color:var(--text)}
+.modal-accept{display:block;width:100%;margin-top:16px;padding:10px;font-size:.6rem;letter-spacing:2px;background:transparent;border:1px solid var(--green);color:var(--green);cursor:pointer;border-radius:3px;font-family:inherit;transition:background .2s}
+.modal-accept:hover{background:rgba(0,232,122,.12)}
 
-#chart-wrap { width:100%; height:100px; margin-top:12px; pointer-events:none; }
-#chartCanvas { width:100%; height:100%; }
-
-#mob-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:150; }
-
-#modal {
-  position:fixed; inset:0;
-  background:rgba(0,0,0,.85);
-  z-index:999;
-  display:flex; align-items:center; justify-content:center;
-  padding:16px;
+@media(max-width:700px){
+  #menuBtn{display:block}
+  #sidebar{position:fixed;top:var(--hdr);left:0;bottom:0;z-index:200;transform:translateX(-100%)}
+  #sidebar.open{transform:translateX(0)}
+  #rpanel{position:fixed;top:var(--hdr);right:0;bottom:0;z-index:200;transform:translateX(100%);width:min(var(--panel),85vw)}
+  #rpanel.open{transform:translateX(0)}
+  #mob-overlay.show{display:block}
+  .hdr-tag.warn{display:none}
 }
-.modal-box {
-  background:var(--bg1);
-  border:1px solid var(--red);
-  border-radius:6px;
-  max-width:520px; width:100%;
-  padding:28px 24px;
-  box-shadow:0 0 40px rgba(255,60,90,.3);
-}
-.modal-box h2 {
-  font-family:var(--sans);
-  font-size:1rem; letter-spacing:3px;
-  color:var(--red); margin-bottom:16px;
-  text-align:center;
-}
-.modal-box p {
-  font-size:.65rem; color:var(--text2);
-  line-height:1.9; margin-bottom:10px;
-}
-.modal-box p strong { color:var(--text); }
-.modal-accept {
-  display:block; width:100%; margin-top:20px;
-  padding:12px; font-family:var(--mono);
-  font-size:.65rem; letter-spacing:2px;
-  background:transparent; border:1px solid var(--green);
-  color:var(--green); cursor:pointer; border-radius:3px;
-  transition:background .2s, box-shadow .2s;
-}
-.modal-accept:hover { background:rgba(0,232,122,.12); box-shadow:0 0 15px rgba(0,232,122,.4); }
-
-@media (max-width: 900px) {
-  :root { --sidebar:260px; --panel:260px; }
-}
-@media (max-width: 700px) {
-  #menuBtn { display:block; }
-  #sidebar {
-    position:fixed; top:var(--hdr); left:0; bottom:0;
-    z-index:200; transform:translateX(-100%);
-  }
-  #sidebar.open { transform:translateX(0); }
-  #rpanel {
-    position:fixed; top:var(--hdr); right:0; bottom:0;
-    z-index:200; transform:translateX(100%);
-    width:min(var(--panel), 85vw);
-  }
-  #rpanel.open { transform:translateX(0); }
-  #mob-overlay.show { display:block; }
-  :root { --hdr:48px; }
-  .hdr-tag.warn { display:none; }
-  #c-tl { font-size:.5rem; }
-}
-@media (max-width: 480px) {
-  :root { --hdr:44px; }
-  .modal-box { padding:20px 16px; }
-  .modal-box h2 { font-size:.85rem; }
-  #chart-wrap { height:70px; }
+@media(max-width:480px){
+  .modal-box{padding:16px 12px}
+  .modal-box h2{font-size:.8rem}
 }
 </style>
 </head>
@@ -376,981 +131,770 @@ select:focus { border-color:var(--green); }
 
 <div id="modal">
   <div class="modal-box">
-    <h2>⚠ TA'LIM PLATFORMASI v2.0</h2>
-    <p>Bu dastur <strong>faqat ta'lim va tadqiqot maqsadida</strong> yaratilgan. RF interferensiya mexanizmlari, 802.11 protokoli, FSPL (Free Space Path Loss) matematik modeli va signal tarqalishini o'rganish uchun mo'ljallangan.</p>
+    <h2>⚠ TA'LIM PLATFORMASI</h2>
+    <p>Bu dastur <strong>faqat ta'lim va tadqiqot maqsadida</strong> yaratilgan. RF interferensiya mexanizmlari, 802.11 protokoli va signal tarqalishini o'rganish uchun mo'ljallangan.</p>
     <p><strong style="color:var(--red)">OGOHLANTIRISHLAR:</strong></p>
-    <p>• Real WiFi jammer qurilma yaratish yoki ishlatish O'zbekiston JK 278-moddasiga ko'ra jinoiy javobgarlikka tortadi (5 yildan 8 yilgacha ozodlikdan mahrum qilish)<br>
-    • Boshqa odamlarning tarmoqlariga xalaqit berish federal jinoyat hisoblanadi (USA: 18 U.S.C. § 1362, UK: Computer Misuse Act 1990)<br>
-    • Bu simulyatsiya HECH QANDAY real signal uzatmaydi — barcha ma'lumotlar faqat matematik model asosida hisoblanadi<br>
-    • 802.11 deauthentication frame'larining tuzilishi va FSPL formulasi ochiq manbalardan olingan</p>
-    <p>Davom etish bilan siz ushbu dasturni faqat ta'lim maqsadida ishlatishga va hech qanday real tarmoqqa zarar yetkazmaslikka rozilik bildirasiz.</p>
-    <button class="modal-accept" onclick="acceptDisclaimer()">✓ TUSHUNDIM — FAQAT TA'LIM MAQSADIDA ISHLATAMAN</button>
+    <p>• Real WiFi jammer qurilma yaratish yoki ishlatish noqonuniy hisoblanadi<br>
+    • Boshqa odamlarning tarmoqlariga xalaqit berish federal jinoyat hisoblanadi<br>
+    • Bu simulyatsiya hech qanday real signal uzatmaydi<br>
+    • Barcha ma'lumotlar FSPL matematik modeli asosida hisoblanadi</p>
+    <p>Davom etish bilan siz ushbu dasturni faqat ta'lim maqsadida ishlatishga rozilik bildirasiz.</p>
+    <button class="modal-accept" id="acceptBtn">✓ TUSHUNDIM — FAQAT TA'LIM</button>
   </div>
 </div>
 
 <header id="hdr">
-  <button id="menuBtn" onclick="toggleMenu()">☰</button>
+  <button id="menuBtn">☰</button>
   <div class="logo">RF·SIM v2</div>
-  <span style="font-size:.5rem;color:var(--text2);letter-spacing:1px;display:none;" id="hdr-sub">802.11 INTERFERENSIYA SIMULATORI</span>
   <div class="sep"></div>
   <div class="hdr-tag v2">v2.0</div>
   <div class="hdr-tag edu">TA'LIM</div>
-  <div class="hdr-tag warn">⚠ TEST ONLY</div>
+  <div class="hdr-tag warn">⚠ SIMULATION</div>
 </header>
 
 <div id="shell">
-
   <aside id="sidebar">
     <div class="sb-tabs">
-      <button class="sb-tab active" onclick="sbTab(this,'tab-ctrl')">KONTROL</button>
-      <button class="sb-tab" onclick="sbTab(this,'tab-ap')">TARMOQLAR</button>
-      <button class="sb-tab" onclick="sbTab(this,'tab-code')">KOD</button>
+      <button class="sb-tab active" data-tab="tab-ctrl">KONTROL</button>
+      <button class="sb-tab" data-tab="tab-ap">TARMOQLAR</button>
+      <button class="sb-tab" data-tab="tab-info">INFO</button>
     </div>
 
     <div class="sb-content" id="tab-ctrl">
       <div class="ctrl-group">
         <div class="ctrl-label">Uzatish quvvati <span class="ctrl-val" id="v-pwr">20 dBm</span></div>
-        <input type="range" id="s-pwr" min="0" max="40" value="20" oninput="updatePwr(this.value)">
+        <input type="range" id="s-pwr" min="0" max="40" value="20">
       </div>
       <div class="ctrl-group">
-        <div class="ctrl-label">Kanal (2.4 GHz) <span class="ctrl-val" id="v-ch">CH 6 · 2437 MHz</span></div>
-        <input type="range" id="s-ch" min="1" max="13" value="6" oninput="updateCh(this.value)">
-      </div>
-      <div class="ctrl-group">
-        <div class="ctrl-label">Paket uzunligi <span class="ctrl-val" id="v-psize">128 bytes</span></div>
-        <input type="range" id="s-psize" min="24" max="1500" value="128" oninput="updatePsize(this.value)">
+        <div class="ctrl-label">Kanal <span class="ctrl-val" id="v-ch">CH 6 · 2437 MHz</span></div>
+        <input type="range" id="s-ch" min="1" max="13" value="6">
       </div>
       <div class="ctrl-group">
         <div class="ctrl-label">Paket tezligi <span class="ctrl-val" id="v-rate">100 pkt/s</span></div>
-        <input type="range" id="s-rate" min="10" max="10000" value="100" oninput="updateRate(this.value)">
+        <input type="range" id="s-rate" min="10" max="5000" value="100">
       </div>
       <div class="ctrl-group">
         <div class="ctrl-label">Hujum turi</div>
-        <select id="s-attack" onchange="updateAttack(this.value)">
+        <select id="s-attack">
           <option value="deauth">Deauthentication (802.11)</option>
           <option value="beacon">Beacon Flood</option>
           <option value="probe">Probe Request Flood</option>
           <option value="disassoc">Disassociation</option>
           <option value="cts">CTS-to-Self Jamming</option>
-          <option value="rts">RTS Flood</option>
-          <option value="ampdu">A-MPDU Null Flood</option>
         </select>
       </div>
-      <div class="ctrl-group">
-        <div class="ctrl-label">Modulyatsiya</div>
-        <select id="s-mod" onchange="updateMod(this.value)">
-          <option value="ofdm">OFDM (802.11a/g/n/ac)</option>
-          <option value="dsss">DSSS (802.11b)</option>
-          <option value="fhss">FHSS (Bluetooth)</option>
-          <option value="cw">CW — Continuous Wave</option>
-          <option value="ofdma">OFDMA (802.11ax/WiFi6)</option>
-        </select>
-      </div>
-
-      <div style="margin-bottom:10px;">
+      <div style="margin-bottom:8px">
         <div class="toggle-row">
-          <span class="toggle-label">Barcha kanallarga hujum</span>
-          <label class="toggle"><input type="checkbox" id="t-allch" onchange="toggleAllCh()"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
+          <span class="toggle-label">Barcha kanallar</span>
+          <label class="toggle"><input type="checkbox" id="t-allch"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
         </div>
         <div class="toggle-row">
           <span class="toggle-label">MAC spoofing</span>
-          <label class="toggle"><input type="checkbox" id="t-mac" onchange="toggleMac()"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
+          <label class="toggle"><input type="checkbox" id="t-mac"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
         </div>
         <div class="toggle-row">
-          <span class="toggle-label">Broadcast target</span>
-          <label class="toggle"><input type="checkbox" id="t-bc" checked onchange="toggleBroadcast()"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
+          <span class="toggle-label">Broadcast</span>
+          <label class="toggle"><input type="checkbox" id="t-bc" checked><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
         </div>
         <div class="toggle-row">
           <span class="toggle-label">Adaptiv quvvat</span>
-          <label class="toggle"><input type="checkbox" id="t-adaptive" onchange="toggleAdaptive()"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
+          <label class="toggle"><input type="checkbox" id="t-adaptive"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
         </div>
-      </div>
-
-      <div class="btn-row">
-        <button class="btn btn-green" id="mainBtn" onclick="toggleSim()">▶ START</button>
-        <button class="btn btn-red" onclick="resetSim()">↺ RESET</button>
       </div>
       <div class="btn-row">
-        <button class="btn btn-cyan" onclick="scanAPs()">⟳ SKANERLASH</button>
-        <button class="btn btn-purple" onclick="exportLogs()">⎘ EKSPORT</button>
+        <button class="btn btn-green" id="mainBtn">▶ START</button>
+        <button class="btn btn-red" id="resetBtn">↺ RESET</button>
       </div>
-
-      <div class="metric-grid" style="margin-top:14px;">
-        <div class="metric-card">
-          <div class="mc-label">JAM RADIUS</div>
-          <div class="mc-val" id="m-rad">—</div>
-          <div class="mc-unit">metr</div>
-        </div>
-        <div class="metric-card">
-          <div class="mc-label">SIGNAL</div>
-          <div class="mc-val" id="m-sig">—</div>
-          <div class="mc-unit">dBm</div>
-        </div>
-        <div class="metric-card">
-          <div class="mc-label">PAKETLAR</div>
-          <div class="mc-val" id="m-pkt">0</div>
-          <div class="mc-unit">jami</div>
-        </div>
-        <div class="metric-card">
-          <div class="mc-label">SAMARADORLIK</div>
-          <div class="mc-val" id="m-eff">—</div>
-          <div class="mc-unit">%</div>
-        </div>
+      <div class="btn-row">
+        <button class="btn btn-cyan" id="scanBtn">⟳ SKANERLASH</button>
+        <button class="btn btn-purple" id="exportBtn">⎘ EKSPORT</button>
       </div>
-
-      <div id="chart-wrap">
-        <canvas id="chartCanvas"></canvas>
+      <div class="metric-grid" style="margin-top:12px">
+        <div class="metric-card"><div class="mc-label">RADIUS</div><div class="mc-val" id="m-rad">—</div><div class="mc-unit">m</div></div>
+        <div class="metric-card"><div class="mc-label">SIGNAL</div><div class="mc-val" id="m-sig">—</div><div class="mc-unit">dBm</div></div>
+        <div class="metric-card"><div class="mc-label">PAKETLAR</div><div class="mc-val" id="m-pkt">0</div><div class="mc-unit">jami</div></div>
+        <div class="metric-card"><div class="mc-label">SAMARADORLIK</div><div class="mc-val" id="m-eff">—</div><div class="mc-unit">%</div></div>
       </div>
+      <div id="chart-wrap"><canvas id="chartCanvas"></canvas></div>
     </div>
 
-    <div class="sb-content" id="tab-ap" style="display:none;">
-      <div style="font-size:.55rem;color:var(--text2);margin-bottom:10px;letter-spacing:1px;display:flex;justify-content:space-between;">
+    <div class="sb-content" id="tab-ap" style="display:none">
+      <div style="font-size:.5rem;color:var(--text2);margin-bottom:8px;display:flex;justify-content:space-between">
         <span>ANIQLANGAN TARMOQLAR</span>
-        <span id="ap-count" style="color:var(--cyan);">8 ta</span>
+        <span id="ap-count" style="color:var(--cyan)">8 ta</span>
       </div>
       <div id="ap-list"></div>
     </div>
 
-    <div class="sb-content" id="tab-code" style="display:none;">
-      <div style="font-size:.55rem;color:var(--cyan);letter-spacing:2px;margin-bottom:10px;">C++ → WASM PIPELINE</div>
-
-      <div style="font-size:.58rem;color:var(--text2);margin-bottom:6px;">▸ FSPL Model (C++ with Emscripten)</div>
-      <div class="code-block"><span class="cm">// Free Space Path Loss formula</span>
-<span class="cm">// FSPL(dB) = 20·log10(d) + 20·log10(f) − 27.55</span>
-<span class="kw">extern</span> <span class="str">"C"</span> {
-EMSCRIPTEN_KEEPALIVE
-<span class="kw">float</span> <span class="fn">calcFSPL</span>(<span class="kw">float</span> d_m, <span class="kw">float</span> f_mhz) {
-  <span class="kw">return</span> <span class="num">20</span>*log10f(d_m)
-    +<span class="num">20</span>*log10f(f_mhz)-<span class="num">27.55f</span>;
-}
-EMSCRIPTEN_KEEPALIVE
-<span class="kw">float</span> <span class="fn">jamSignal</span>(<span class="kw">float</span> pwr_dbm,
-  <span class="kw">float</span> d_m, <span class="kw">float</span> f_mhz) {
-  <span class="kw">return</span> pwr_dbm - <span class="fn">calcFSPL</span>(d_m,f_mhz);
-}
-EMSCRIPTEN_KEEPALIVE
-<span class="kw">int</span> <span class="fn">deauthFrames</span>(<span class="kw">float</span> sec,
-  <span class="kw">float</span> rate_per_sec) {
-  <span class="kw">return</span> (<span class="kw">int</span>)(sec * rate_per_sec);
-}
-}</div>
-
-      <div style="font-size:.58rem;color:var(--text2);margin-bottom:6px;">▸ 802.11 Deauth Frame Structure</div>
-      <div class="code-block"><span class="cm">// Frame Control: 0xC0 0x00 = Deauth</span>
-<span class="cm">// Bytes: FC(2) Dur(2) Addr1(6) Addr2(6) Addr3(6) Seq(2) Reason(2) FCS(4)</span>
-<span class="kw">struct</span> <span class="fn">DeauthFrame</span> {
-  uint8_t fc[<span class="num">2</span>] = {<span class="num">0xC0</span>,<span class="num">0x00</span>};
-  uint8_t duration[<span class="num">2</span>];
-  uint8_t dst_addr[<span class="num">6</span>];
-  uint8_t src_addr[<span class="num">6</span>];
-  uint8_t bssid[<span class="num">6</span>];
-  uint8_t seq_num[<span class="num">2</span>];
-  uint8_t reason[<span class="num">2</span>] = {<span class="num">0x07</span>,<span class="num">0x00</span>};
-  <span class="cm">// Reason 7 = "Class 3 frame received from nonassociated STA"</span>
-  <span class="cm">// FCS auto-calculated by hardware</span>
-};</div>
-
-      <div style="font-size:.58rem;color:var(--text2);margin-bottom:6px;">▸ Emscripten Build Command</div>
-      <div class="code-block"><span class="fn">emcc</span> rf_sim.cpp -o rf_sim.js \
-  -s WASM=<span class="num">1</span> \
-  -s MODULARIZE=<span class="num">1</span> \
-  -s EXPORTED_FUNCTIONS=<span class="str">'["_calcFSPL","_jamSignal","_deauthFrames"]'</span> \
-  -s ALLOW_MEMORY_GROWTH=<span class="num">1</span> \
-  -O3 --closure <span class="num">1</span></div>
-
-      <div style="font-size:.58rem;color:var(--text2);margin-bottom:6px;">▸ JavaScript Bridge</div>
-      <div class="code-block"><span class="kw">const</span> Module = <span class="kw">await</span> <span class="fn">WasmRFSim</span>();
-<span class="kw">const</span> jamSignal = Module.<span class="fn">cwrap</span>(
-  <span class="str">'jamSignal'</span>, <span class="str">'number'</span>,
-  [<span class="str">'number'</span>,<span class="str">'number'</span>,<span class="str">'number'</span>]
-);
-<span class="kw">const</span> radius = (<span class="kw">function</span>(){
-  <span class="kw">for</span>(<span class="kw">let</span> d=<span class="num">200</span>; d&gt;=<span class="num">0</span>; d-=<span class="num">0.5</span>)
-    <span class="kw">if</span>(<span class="fn">jamSignal</span>(pwr,d,f) &gt;= -<span class="num">85</span>)
-      <span class="kw">return</span> d;
-  <span class="kw">return</span> <span class="num">0</span>;
-})();
-<span class="cm">// → Three.js vizualizatsiya</span>
-jamSphere.scale.<span class="fn">setScalar</span>(radius/<span class="num">8</span>);</div>
-
-      <div style="font-size:.58rem;color:var(--text2);margin-bottom:6px;">▸ SINR Calculation</div>
-      <div class="code-block"><span class="cm">// Signal-to-Interference+Noise Ratio</span>
-<span class="cm">// SINR(dB) = P_signal − (P_interference + N)</span>
-<span class="kw">float</span> <span class="fn">calcSINR</span>(<span class="kw">float</span> sig_dbm,
-  <span class="kw">float</span> jam_dbm, <span class="kw">float</span> noise_dbm) {
-  <span class="kw">float</span> interference =
-    powf(<span class="num">10</span>, jam_dbm/<span class="num">10</span>);
-  <span class="kw">float</span> noise =
-    powf(<span class="num">10</span>, noise_dbm/<span class="num">10</span>);
-  <span class="kw">float</span> signal =
-    powf(<span class="num">10</span>, sig_dbm/<span class="num">10</span>);
-  <span class="kw">float</span> sinr =
-    signal / (interference + noise);
-  <span class="kw">return</span> <span class="num">10</span> * log10f(sinr);
-}
-<span class="cm">// SINR &lt; 0 dB → connection lost</span></div>
+    <div class="sb-content" id="tab-info" style="display:none">
+      <div style="font-size:.5rem;color:var(--cyan);letter-spacing:2px;margin-bottom:8px">802.11 FRAME STRUCTURE</div>
+      <div style="background:var(--bg0);border:1px solid var(--border2);border-radius:4px;padding:8px;font-size:.55rem;line-height:1.7;color:#7ab;overflow-x:auto;margin-bottom:8px">
+<span style="color:#44607a">// Deauthentication frame (0xC0)</span><br>
+<span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">DeauthFrame</span> {<br>
+&nbsp;&nbsp;uint8_t fc[<span style="color:#bd93f9">2</span>] = {<span style="color:#bd93f9">0xC0</span>,<span style="color:#bd93f9">0x00</span>};<br>
+&nbsp;&nbsp;uint8_t duration[<span style="color:#bd93f9">2</span>];<br>
+&nbsp;&nbsp;uint8_t dst[<span style="color:#bd93f9">6</span>]; <span style="color:#44607a">// broadcast FF:FF:FF:FF:FF:FF</span><br>
+&nbsp;&nbsp;uint8_t src[<span style="color:#bd93f9">6</span>];<br>
+&nbsp;&nbsp;uint8_t bssid[<span style="color:#bd93f9">6</span>];<br>
+&nbsp;&nbsp;uint8_t seq[<span style="color:#bd93f9">2</span>];<br>
+&nbsp;&nbsp;uint8_t reason[<span style="color:#bd93f9">2</span>] = {<span style="color:#bd93f9">0x07</span>,<span style="color:#bd93f9">0x00</span>};<br>
+};<br>
+<span style="color:#44607a">// Reason 7 = "Class 3 frame from nonassociated STA"</span>
+      </div>
+      <div style="font-size:.5rem;color:var(--cyan);letter-spacing:2px;margin-bottom:8px">FSPL FORMULA</div>
+      <div style="background:var(--bg0);border:1px solid var(--border2);border-radius:4px;padding:8px;font-size:.55rem;line-height:1.7;color:#7ab;overflow-x:auto;margin-bottom:8px">
+<span style="color:#44607a">// Free Space Path Loss</span><br>
+FSPL(dB) = 20·log10(d) + 20·log10(f) - 27.55<br><br>
+<span style="color:#44607a">// SINR (Signal-to-Interference+Noise Ratio)</span><br>
+SINR(dB) = P_signal - (P_interference + N)<br><br>
+<span style="color:#44607a">// SINR &lt; 0 dB → connection lost</span>
+      </div>
+      <div style="font-size:.5rem;color:var(--cyan);letter-spacing:2px;margin-bottom:8px">EMSCRIPTEN BUILD</div>
+      <div style="background:var(--bg0);border:1px solid var(--border2);border-radius:4px;padding:8px;font-size:.55rem;line-height:1.7;color:#7ab;overflow-x:auto">
+emcc rf_sim.cpp -o rf_sim.js \<br>
+&nbsp;&nbsp;-s WASM=<span style="color:#bd93f9">1</span> \<br>
+&nbsp;&nbsp;-s MODULARIZE=<span style="color:#bd93f9">1</span> \<br>
+&nbsp;&nbsp;-s EXPORTED_FUNCTIONS='["_calcJam","_deauthPkts"]' \<br>
+&nbsp;&nbsp;-O3 --closure <span style="color:#bd93f9">1</span>
+      </div>
     </div>
   </aside>
 
   <div id="center">
     <canvas id="threeCanvas"></canvas>
-
     <div class="c-overlay" id="c-tl">
-      RF INTERFERENSIYA SIMULATORI v2.0<br>
-      <span id="o-mode" style="color:var(--text2)">REJIM: KUTISH REJIMI</span><br>
-      <span id="o-freq" style="color:var(--text2)">2437 MHz · CH6 · 802.11g</span>
+      RF INTERFERENSIYA SIMULATORI<br>
+      <span id="o-mode" style="color:var(--text2)">REJIM: KUTISH</span><br>
+      <span id="o-freq" style="color:var(--text2)">2437 MHz · CH6</span>
     </div>
-
     <div class="c-overlay" id="c-status">
       <div class="status-dot" id="statusDot"></div>
       <span id="statusTxt">STANDBY</span>
     </div>
-
     <div class="c-overlay" id="c-br">
-      <span id="o-fps" style="color:var(--green)">60 FPS</span><br>
-      Three.js r128 · WebGL2<br>
-      FAQAT SIMULYATSIYA
+      <span id="o-fps">60 FPS</span><br>
+      WebGL2 · FAQAT SIMULYATSIYA
     </div>
-
-    <div id="spectrum-wrap">
-      <canvas id="specCanvas"></canvas>
-    </div>
+    <div id="spectrum-wrap"><canvas id="specCanvas"></canvas></div>
   </div>
 
   <aside id="rpanel">
-    <div class="rp-section">
-      <div class="rp-title">RUNTIME LOG</div>
-    </div>
+    <div class="rp-section"><div class="rp-title">RUNTIME LOG</div></div>
     <div id="log-wrap"></div>
-    <div class="rp-section" style="border-top:1px solid var(--border2); border-bottom:none; margin-top:auto;">
-      <div style="font-size:.5rem;color:var(--text2);line-height:1.8;">
-        ⚠ Bu dastur real signal uzatmaydi.<br>
-        Faqat ta'lim va test maqsadida.
+    <div class="rp-section" style="border-top:1px solid var(--border2);border-bottom:none;margin-top:auto">
+      <div style="font-size:.45rem;color:var(--text2);line-height:1.7">
+        ⚠ Real signal uzatmaydi. Faqat ta'lim uchun.
       </div>
     </div>
   </aside>
-
 </div>
 
-<div id="mob-overlay" onclick="closeMenus()"></div>
+<div id="mob-overlay"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
 <script>
-const WasmSim = {
-  calcJam(dist, power, freq) {
-    if (dist <= 0) return power;
-    const fspl = 20 * Math.log10(dist) + 20 * Math.log10(freq) - 27.55;
-    return power - fspl;
-  },
-  getRadius(power, thresh = -85, freq = 2437) {
-    for (let d = 200; d >= 0.5; d -= 0.5)
-      if (this.calcJam(d, power, freq) >= thresh) return d;
-    return 0;
-  },
-  calcSINR(signal_dbm, jam_dbm, noise_dbm = -95) {
-    const sig = Math.pow(10, signal_dbm / 10);
-    const jam = Math.pow(10, jam_dbm / 10);
-    const noise = Math.pow(10, noise_dbm / 10);
-    return 10 * Math.log10(sig / (jam + noise));
-  },
-  deauthPkts(ms, rate) { return Math.floor(ms * rate / 1000); },
-  fspl(d, f) { return 20 * Math.log10(d) + 20 * Math.log10(f) - 27.55; },
-  throughput(sinr, bw = 20) {
-    if (sinr < -5) return 0;
-    if (sinr < 5) return bw * 0.3 * (sinr + 5) / 10;
-    if (sinr < 15) return bw * 0.3 + bw * 0.5 * (sinr - 5) / 10;
-    if (sinr < 25) return bw * 0.8 + bw * 0.2 * (sinr - 15) / 10;
-    return bw;
-  }
-};
+(function(){
+  'use strict';
 
-const S = {
-  running: false,
-  power: 20,
-  channel: 6,
-  psize: 128,
-  rate: 100,
-  attack: 'deauth',
-  mod: 'ofdm',
-  allCh: false,
-  macSpoof: false,
-  broadcast: true,
-  adaptive: false,
-  totalPkts: 0,
-  totalBytes: 0,
-  jamRadius: 10,
-  t: 0,
-  logTimer: 0,
-  scanTimer: 0,
-  fps: 60,
-  frameCount: 0,
-  fpsTimer: 0,
-  efficiency: 0,
-  throughputs: []
-};
+  /* ===== FIZIKA MODULI ===== */
+  const RF = {
+    calcJam(d, p, f) {
+      if (d <= 0) return p;
+      return p - (20 * Math.log10(d) + 20 * Math.log10(f) - 27.55);
+    },
+    getRadius(p, f, thr) {
+      thr = thr || -85;
+      for (let d = 200; d > 0; d -= 0.5)
+        if (this.calcJam(d, p, f) >= thr) return d;
+      return 0;
+    },
+    calcSINR(sig, jam, noise) {
+      noise = noise || -95;
+      const s = Math.pow(10, sig / 10);
+      const j = Math.pow(10, jam / 10);
+      const n = Math.pow(10, noise / 10);
+      return 10 * Math.log10(s / (j + n));
+    }
+  };
 
-const CHAN_FREQ = [2412,2417,2422,2427,2432,2437,2442,2447,2452,2457,2462,2467,2472];
-
-const APS = [
-  { ssid:'HomeNetwork_5G', mac:'A4:C3:F0:12:34:56', ch:6,  dbm:-55, x:-5, z:3,  dist:5.8 },
-  { ssid:'ASUS_Router',    mac:'00:1A:2B:3C:4D:5E', ch:1,  dbm:-62, x:4,  z:-3, dist:5.0 },
-  { ssid:'TP-Link_2.4G',  mac:'EC:08:6B:AA:BB:CC', ch:11, dbm:-70, x:-3, z:-5, dist:5.8 },
-  { ssid:'Office_Wifi',   mac:'B8:27:EB:DD:EE:FF', ch:6,  dbm:-48, x:6,  z:4,  dist:7.2 },
-  { ssid:'MikroTik_AP',   mac:'00:0C:42:11:22:33', ch:3,  dbm:-75, x:0,  z:7,  dist:7.0 },
-  { ssid:'Tenda_AC1200',  mac:'C8:3A:35:FF:00:11', ch:9,  dbm:-68, x:-6, z:-1, dist:6.1 },
-  { ssid:'Xiaomi_Router', mac:'04:CF:8C:44:55:66', ch:6,  dbm:-58, x:3,  z:6,  dist:6.7 },
-  { ssid:'ZyXEL_NBG',    mac:'58:EF:68:77:88:99', ch:13, dbm:-80, x:-4, z:5,  dist:6.4 },
-];
-
-const canvas3 = document.getElementById('threeCanvas');
-const center  = document.getElementById('center');
-const renderer = new THREE.WebGLRenderer({ canvas: canvas3, antialias: true, alpha: true });
-renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
-const scene  = new THREE.Scene();
-scene.fog    = new THREE.FogExp2(0x020810, 0.025);
-scene.background = new THREE.Color(0x020508);
-
-const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 800);
-camera.position.set(0, 6, 16);
-camera.lookAt(0, 0, 0);
-
-function resizeRenderer() {
-  const w = center.clientWidth, h = center.clientHeight;
-  renderer.setSize(w, h);
-  camera.aspect = w / h;
-  camera.updateProjectionMatrix();
-}
-window.addEventListener('resize', resizeRenderer);
-
-scene.add(new THREE.AmbientLight(0x112233, 0.6));
-const sun = new THREE.DirectionalLight(0x334455, 0.8);
-sun.position.set(10, 20, 10);
-sun.castShadow = true;
-scene.add(sun);
-
-const jamLight = new THREE.PointLight(0x00e87a, 0, 30);
-scene.add(jamLight);
-
-const grid = new THREE.GridHelper(60, 60, 0x0a1e2e, 0x080f1a);
-grid.position.y = -2.5;
-scene.add(grid);
-
-const gRing = new THREE.Mesh(
-  new THREE.RingGeometry(0.3, 0.5, 64),
-  new THREE.MeshBasicMaterial({ color: 0x00e87a, side: THREE.DoubleSide, transparent: true, opacity: 0.4 })
-);
-gRing.rotation.x = -Math.PI / 2;
-gRing.position.y = -2.49;
-scene.add(gRing);
-
-const jamGrp = new THREE.Group();
-const jamBody = new THREE.Mesh(
-  new THREE.BoxGeometry(0.6, 0.15, 0.4),
-  new THREE.MeshStandardMaterial({ color: 0x1a2a3a, metalness: 0.8, roughness: 0.3 })
-);
-jamGrp.add(jamBody);
-
-[-0.25, 0, 0.25].forEach((x, i) => {
-  const ant = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.025, 0.025, 0.5 + i*0.1, 8),
-    new THREE.MeshStandardMaterial({ color: 0x334455, metalness: 1, roughness: 0.2 })
-  );
-  ant.position.set(x, 0.32+i*0.05, 0);
-  jamGrp.add(ant);
-});
-
-const led = new THREE.Mesh(
-  new THREE.SphereGeometry(0.04, 8, 8),
-  new THREE.MeshStandardMaterial({ color: 0x00e87a, emissive: 0x00e87a, emissiveIntensity: 0 })
-);
-led.position.set(0.25, 0.1, 0.21);
-jamGrp.add(led);
-jamGrp.position.y = -2;
-scene.add(jamGrp);
-
-const sphereMat = new THREE.MeshStandardMaterial({
-  color: 0x00e87a, wireframe: true,
-  transparent: true, opacity: 0,
-  emissive: 0x00ff44, emissiveIntensity: 0.3
-});
-const sphere = new THREE.Mesh(new THREE.SphereGeometry(1, 64, 64), sphereMat);
-scene.add(sphere);
-
-const innerMat = new THREE.MeshStandardMaterial({
-  color: 0x001808, transparent: true, opacity: 0,
-  side: THREE.BackSide
-});
-const inner = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 32), innerMat);
-scene.add(inner);
-
-const waves = [];
-for (let i = 0; i < 4; i++) {
-  const ring = new THREE.Mesh(
-    new THREE.TorusGeometry(1, 0.015, 8, 80),
-    new THREE.MeshBasicMaterial({ color: 0x00e87a, transparent: true, opacity: 0 })
-  );
-  ring.rotation.x = Math.random() * Math.PI;
-  ring.rotation.z = Math.random() * Math.PI;
-  ring._phase = i * (Math.PI * 2 / 4);
-  scene.add(ring);
-  waves.push(ring);
-}
-
-const PCOUNT = 800;
-const pGeo = new THREE.BufferGeometry();
-const pPos = new Float32Array(PCOUNT * 3);
-const pCol = new Float32Array(PCOUNT * 3);
-const pVel = Array.from({ length: PCOUNT }, () => ({
-  th: Math.random() * Math.PI * 2,
-  ph: Math.acos(2 * Math.random() - 1),
-  r: Math.random(),
-  speed: 0.005 + Math.random() * 0.03,
-  life: Math.random()
-}));
-pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-pGeo.setAttribute('color', new THREE.BufferAttribute(pCol, 3));
-const pMat = new THREE.PointsMaterial({
-  color: 0x00e87a, size: 0.06, transparent: true, opacity: 0,
-  vertexColors: false
-});
-const particles = new THREE.Points(pGeo, pMat);
-scene.add(particles);
-
-const apMeshes = [];
-const apGeo = new THREE.CylinderGeometry(0.12, 0.18, 0.25, 8);
-const apTop = new THREE.CylinderGeometry(0.04, 0.04, 0.3, 6);
-
-APS.forEach((ap, i) => {
-  const grp = new THREE.Group();
-  const body = new THREE.Mesh(apGeo,
-    new THREE.MeshStandardMaterial({ color: 0x1a2a3a, metalness: 0.7, roughness: 0.4 }));
-  grp.add(body);
-  const ant = new THREE.Mesh(apTop,
-    new THREE.MeshStandardMaterial({ color: 0x223344, metalness: 0.9, roughness: 0.2 }));
-  ant.position.y = 0.28;
-  grp.add(ant);
-  const statusLed = new THREE.Mesh(
-    new THREE.SphereGeometry(0.035, 6, 6),
-    new THREE.MeshStandardMaterial({ color: 0x00e87a, emissive: 0x00e87a, emissiveIntensity: 1 })
-  );
-  statusLed.position.set(0.13, 0.05, 0.13);
-  grp.add(statusLed);
-  grp.position.set(ap.x, -2.38, ap.z);
-  grp._led = statusLed;
-  grp._ap = ap;
-  scene.add(grp);
-  apMeshes.push(grp);
-});
-
-const specCanvas = document.getElementById('specCanvas');
-const sCtx = specCanvas.getContext('2d');
-let specData = Array(13).fill(0).map((_, i) => ({ freq: CHAN_FREQ[i], ch: i+1, power: -90 + Math.random()*15 }));
-
-function resizeSpec() {
-  specCanvas.width  = specCanvas.offsetWidth * devicePixelRatio;
-  specCanvas.height = specCanvas.offsetHeight * devicePixelRatio;
-  sCtx.scale(devicePixelRatio, devicePixelRatio);
-}
-window.addEventListener('resize', resizeSpec);
-
-function drawSpectrum() {
-  const W = specCanvas.offsetWidth, H = specCanvas.offsetHeight;
-  sCtx.clearRect(0, 0, W, H);
-
-  const bg = sCtx.createLinearGradient(0, 0, 0, H);
-  bg.addColorStop(0, 'rgba(0,20,10,0.85)');
-  bg.addColorStop(1, 'rgba(2,5,8,0.95)');
-  sCtx.fillStyle = bg;
-  sCtx.fillRect(0, 0, W, H);
-
-  sCtx.strokeStyle = 'rgba(0,200,120,0.2)';
-  sCtx.lineWidth = 1;
-  sCtx.beginPath();
-  sCtx.moveTo(0, 0); sCtx.lineTo(W, 0);
-  sCtx.stroke();
-
-  const barW  = W / 13;
-  const scale = H / 60;
-
-  specData.forEach((d, i) => {
-    const norm = Math.max(0, Math.min(1, (d.power + 90) / 60));
-    const bH   = norm * (H - 12);
-    const x    = i * barW;
-
-    const isActive = S.running && (S.allCh || d.ch === S.channel);
-    const col = isActive ? `rgba(255,60,90,${0.7 + norm*0.3})` :
-                           `rgba(0,232,122,${0.3 + norm*0.5})`;
-
-    const grad = sCtx.createLinearGradient(x, H-bH, x, H);
-    grad.addColorStop(0, col);
-    grad.addColorStop(1, 'rgba(0,0,0,0)');
-
-    sCtx.fillStyle = grad;
-    sCtx.fillRect(x + 1, H - bH, barW - 2, bH);
-
-    sCtx.strokeStyle = isActive ? 'rgba(255,60,90,0.9)' : 'rgba(0,232,122,0.6)';
-    sCtx.lineWidth = 1.5;
-    sCtx.beginPath();
-    sCtx.moveTo(x + 2, H - bH);
-    sCtx.lineTo(x + barW - 2, H - bH);
-    sCtx.stroke();
-
-    sCtx.fillStyle = 'rgba(90,120,140,0.8)';
-    sCtx.font = `${Math.max(8, barW * 0.35)}px JetBrains Mono, monospace`;
-    sCtx.textAlign = 'center';
-    sCtx.fillText(d.ch, x + barW/2, H - 2);
-  });
-
-  sCtx.fillStyle = 'rgba(0,207,255,0.5)';
-  sCtx.font = '9px JetBrains Mono, monospace';
-  sCtx.textAlign = 'left';
-  sCtx.fillText('2.4 GHz SPECTRUM', 6, 11);
-}
-
-const chartCanvas = document.getElementById('chartCanvas');
-const chartCtx = chartCanvas.getContext('2d');
-let chartData = [];
-
-function resizeChart() {
-  const rect = chartCanvas.parentElement.getBoundingClientRect();
-  chartCanvas.width = rect.width * devicePixelRatio;
-  chartCanvas.height = rect.height * devicePixelRatio;
-  chartCtx.scale(devicePixelRatio, devicePixelRatio);
-}
-window.addEventListener('resize', resizeChart);
-
-function drawChart() {
-  const W = chartCanvas.offsetWidth, H = chartCanvas.offsetHeight;
-  chartCtx.clearRect(0, 0, W, H);
-
-  chartCtx.strokeStyle = 'rgba(0,200,120,0.1)';
-  chartCtx.lineWidth = 1;
-  chartCtx.beginPath();
-  chartCtx.moveTo(0, H/2);
-  chartCtx.lineTo(W, H/2);
-  chartCtx.stroke();
-
-  chartCtx.fillStyle = 'rgba(0,207,255,0.3)';
-  chartCtx.font = '7px JetBrains Mono, monospace';
-  chartCtx.textAlign = 'left';
-  chartCtx.fillText('TX RATE', 2, 8);
-
-  if (chartData.length < 2) return;
-
-  const maxVal = Math.max(1, ...chartData);
-  const mid = H / 2;
-
-  chartCtx.beginPath();
-  chartCtx.moveTo(0, mid);
-  for (let i = 0; i < chartData.length; i++) {
-    const x = (i / (chartData.length - 1)) * W;
-    const y = mid - (chartData[i] / maxVal) * (mid - 4);
-    chartCtx.lineTo(x, y);
-  }
-  chartCtx.strokeStyle = S.running ? '#ff3c5a' : '#00e87a';
-  chartCtx.lineWidth = 1.5;
-  chartCtx.stroke();
-
-  const grad = chartCtx.createLinearGradient(0, 0, 0, H);
-  grad.addColorStop(0, S.running ? 'rgba(255,60,90,0.15)' : 'rgba(0,232,122,0.15)');
-  grad.addColorStop(1, 'rgba(0,0,0,0)');
-  chartCtx.fillStyle = grad;
-  chartCtx.beginPath();
-  chartCtx.moveTo(0, mid);
-  for (let i = 0; i < chartData.length; i++) {
-    const x = (i / (chartData.length - 1)) * W;
-    const y = mid - (chartData[i] / maxVal) * (mid - 4);
-    chartCtx.lineTo(x, y);
-  }
-  chartCtx.lineTo(W, mid);
-  chartCtx.closePath();
-  chartCtx.fill();
-}
-
-function renderAPList() {
-  const el = document.getElementById('ap-list');
-  const countEl = document.getElementById('ap-count');
-  let jammed = 0;
-  el.innerHTML = APS.map((ap, i) => {
-    const j = S.running && isJammed(ap);
-    if (j) jammed++;
-    const statusClass = j ? 'jammed' : 'ok';
-    const sigClass = j ? 'bad' : 'good';
-    const sigVal = j ? Math.max(-95, ap.dbm - 30 - Math.random()*15).toFixed(0) : ap.dbm;
-    return `<div class="ap-item">
-      <div class="ap-icon ${statusClass}">${j ? '✕' : '⌘'}</div>
-      <div class="ap-info">
-        <div class="ap-ssid">${ap.ssid}</div>
-        <div class="ap-mac">${ap.mac} · CH${ap.ch}</div>
-      </div>
-      <div class="ap-sig ${sigClass}">${sigVal} dBm</div>
-    </div>`;
-  }).join('');
-  countEl.textContent = `${jammed}/${APS.length} bloklangan`;
-}
-
-function isJammed(ap) {
-  if (S.allCh) return ap.dist < S.jamRadius;
-  return ap.ch === S.channel && ap.dist < S.jamRadius;
-}
-
-const logWrap = document.getElementById('log-wrap');
-let logBuf = [];
-
-function addLog(msg, cls = 'ok') {
-  const ts = new Date().toLocaleTimeString('en', { hour12: false, hour:'2-digit', minute:'2-digit', second:'2-digit' });
-  logBuf.push(`<div class="log-line ${cls}">[${ts}] ${msg}</div>`);
-  if (logBuf.length > 200) logBuf.shift();
-  logWrap.innerHTML = logBuf.join('');
-  logWrap.scrollTop = logWrap.scrollHeight;
-}
-
-function updatePwr(v) {
-  S.power = +v;
-  document.getElementById('v-pwr').textContent = v + ' dBm';
-  recalcRadius();
-  if (S.running) addLog(`Quvvat: ${v} dBm → radius: ${S.jamRadius.toFixed(1)}m`, 'ok');
-}
-
-function updateCh(v) {
-  S.channel = +v;
-  const freq = CHAN_FREQ[S.channel - 1];
-  document.getElementById('v-ch').textContent = `CH ${v} · ${freq} MHz`;
-  document.getElementById('o-freq').textContent = `${freq} MHz · CH${v} · 802.11g`;
-  recalcRadius();
-  if (S.running) addLog(`Kanal: CH${v} (${freq} MHz)`, 'warn');
-}
-
-function updatePsize(v) {
-  S.psize = +v;
-  document.getElementById('v-psize').textContent = v + ' bytes';
-  if (S.running) addLog(`Paket uzunligi: ${v} bayt`, 'ok');
-}
-
-function updateRate(v) {
-  S.rate = +v;
-  document.getElementById('v-rate').textContent = v + ' pkt/s';
-  if (S.running) addLog(`Paket tezligi: ${v}/s`, 'ok');
-}
-
-function updateAttack(v) {
-  S.attack = v;
-  const names = {
+  /* ===== KANALLAR ===== */
+  const CHAN_FREQ = [2412,2417,2422,2427,2432,2437,2442,2447,2452,2457,2462,2467,2472];
+  const ATTACK_NAMES = {
     deauth:'Deauth (0xC0)',
     beacon:'Beacon Flood',
-    probe:'Probe Request Flood',
+    probe:'Probe Flood',
     disassoc:'Disassoc (0xA0)',
-    cts:'CTS-to-Self',
-    rts:'RTS Flood',
-    ampdu:'A-MPDU Null Flood'
+    cts:'CTS-to-Self'
   };
-  if (S.running) addLog(`Hujum turi: ${names[v]}`, 'warn');
-}
 
-function updateMod(v) { S.mod = v; }
-function toggleAllCh() { S.allCh = document.getElementById('t-allch').checked; }
-function toggleMac()   { S.macSpoof = document.getElementById('t-mac').checked; }
-function toggleBroadcast() { S.broadcast = document.getElementById('t-bc').checked; }
-function toggleAdaptive() {
-  S.adaptive = document.getElementById('t-adaptive').checked;
-  if (S.running) addLog(`Adaptiv quvvat: ${S.adaptive ? 'YOQILGAN' : "O'CHIRILGAN"}`, 'info');
-}
+  /* ===== AP RO'YXATI ===== */
+  const APS = [
+    { ssid:'HomeNetwork', mac:'A4:C3:F0:12:34:56', ch:6,  dbm:-55, x:-5, z:3,  dist:5.8 },
+    { ssid:'ASUS_Router', mac:'00:1A:2B:3C:4D:5E', ch:1,  dbm:-62, x:4,  z:-3, dist:5.0 },
+    { ssid:'TP-Link_2.4G', mac:'EC:08:6B:AA:BB:CC', ch:11, dbm:-70, x:-3, z:-5, dist:5.8 },
+    { ssid:'Office_Wifi', mac:'B8:27:EB:DD:EE:FF', ch:6,  dbm:-48, x:6,  z:4,  dist:7.2 },
+    { ssid:'MikroTik_AP', mac:'00:0C:42:11:22:33', ch:3,  dbm:-75, x:0,  z:7,  dist:7.0 },
+    { ssid:'Tenda_AC1200', mac:'C8:3A:35:FF:00:11', ch:9,  dbm:-68, x:-6, z:-1, dist:6.1 },
+    { ssid:'Xiaomi_Router', mac:'04:CF:8C:44:55:66', ch:6,  dbm:-58, x:3,  z:6,  dist:6.7 },
+    { ssid:'ZyXEL_NBG', mac:'58:EF:68:77:88:99', ch:13, dbm:-80, x:-4, z:5,  dist:6.4 }
+  ];
 
-function recalcRadius() {
-  S.jamRadius = WasmSim.getRadius(S.power, -85, CHAN_FREQ[S.channel - 1]);
-  document.getElementById('m-rad').textContent = S.jamRadius.toFixed(1);
-  const sigVal = S.jamRadius > 0 ? WasmSim.calcJam(S.jamRadius, S.power, CHAN_FREQ[S.channel-1]) : 0;
-  document.getElementById('m-sig').textContent = sigVal.toFixed(1);
-}
+  /* ===== STATE ===== */
+  const S = {
+    running: false, power: 20, channel: 6, rate: 100, attack: 'deauth',
+    allCh: false, macSpoof: false, broadcast: true, adaptive: false,
+    totalPkts: 0, jamRadius: 10, t: 0, logTimer: 0, scanTimer: 0,
+    fps: 60, fCount: 0, fpsTimer: 0, efficiency: 0, chartData: []
+  };
 
-function toggleSim() {
-  S.running = !S.running;
-  const btn = document.getElementById('mainBtn');
-  btn.textContent = S.running ? '⏸ STOP' : '▶ START';
-  btn.className = S.running ? 'btn btn-red' : 'btn btn-green';
+  /* ===== DOM REFERENCES ===== */
+  let $ = id => document.getElementById(id);
+  let els = {
+    modal: $('modal'), acceptBtn: $('acceptBtn'),
+    mainBtn: $('mainBtn'), resetBtn: $('resetBtn'), scanBtn: $('scanBtn'), exportBtn: $('exportBtn'), menuBtn: $('menuBtn'),
+    sPwr: $('s-pwr'), sCh: $('s-ch'), sRate: $('s-rate'), sAttack: $('s-attack'),
+    vPwr: $('v-pwr'), vCh: $('v-ch'), vRate: $('v-rate'),
+    tAllCh: $('t-allch'), tMac: $('t-mac'), tBc: $('t-bc'), tAdaptive: $('t-adaptive'),
+    mRad: $('m-rad'), mSig: $('m-sig'), mPkt: $('m-pkt'), mEff: $('m-eff'),
+    oMode: $('o-mode'), oFreq: $('o-freq'),
+    statusDot: $('statusDot'), statusTxt: $('statusTxt'),
+    logWrap: $('log-wrap'), apList: $('ap-list'), apCount: $('ap-count'),
+    threeCanvas: $('threeCanvas'), specCanvas: $('specCanvas'), chartCanvas: $('chartCanvas'),
+    center: $('center'), sidebar: $('sidebar'), rpanel: $('rpanel'), mobOverlay: $('mob-overlay'),
+    tabs: document.querySelectorAll('.sb-tab'), sbContents: document.querySelectorAll('.sb-content'),
+    oFps: $('o-fps')
+  };
 
-  document.getElementById('statusDot').className = 'status-dot' + (S.running ? ' live' : '');
-  document.getElementById('statusTxt').textContent = S.running ? 'AKTIV' : 'STANDBY';
-  document.getElementById('o-mode').textContent = S.running ? 'REJIM: INTERFERENSIYA' : 'REJIM: KUTISH REJIMI';
-  document.getElementById('o-mode').style.color = S.running ? '#ff3c5a' : '#5a7a8a';
-
-  recalcRadius();
-
-  if (S.running) {
-    const freq = CHAN_FREQ[S.channel - 1];
-    addLog('━━━ SIMULYATSIYA BOSHLANDI ━━━', 'warn');
-    addLog(`Hujum: ${S.attack} · Quvvat: ${S.power}dBm · Kanal: CH${S.channel} (${freq}MHz)`, 'ok');
-    addLog(`Paket: ${S.psize}B · ${S.rate}pkt/s · ${(S.psize*S.rate*8/1e6).toFixed(2)} Mbps`, 'ok');
-    addLog(`Target: ${S.broadcast ? 'FF:FF:FF:FF:FF:FF (BROADCAST)' : 'UNICAST'}`, 'ok');
-    addLog(`MAC Spoof: ${S.macSpoof ? 'YOQILGAN' : "O'CHIRILGAN"}`, 'info');
-    if (S.macSpoof) addLog(`Yangi MAC: ${randMac()}`, 'ok');
-    addLog(`Samaradorlik radiusi: ${S.jamRadius.toFixed(1)}m`, 'ok');
-    S.totalPkts = 0;
-    S.totalBytes = 0;
-    S.throughputs = [];
-    chartData = [];
-  } else {
-    addLog('━━━ SIMULYATSIYA TO\'XTATILDI ━━━', 'info');
-    addLog(`Jami yuborilgan: ${S.totalPkts.toLocaleString()} paket (${formatBytes(S.totalBytes)})`, 'dim');
+  /* ===== LOG ===== */
+  let logBuf = [];
+  function addLog(msg, cls) {
+    cls = cls || 'ok';
+    let ts = new Date().toLocaleTimeString('en', {hour12:false, hour:'2-digit', minute:'2-digit', second:'2-digit'});
+    logBuf.push('<div class="log-line '+cls+'">['+ts+'] '+msg+'</div>');
+    if (logBuf.length > 150) logBuf.shift();
+    els.logWrap.innerHTML = logBuf.join('');
+    els.logWrap.scrollTop = els.logWrap.scrollHeight;
   }
-  renderAPList();
-}
 
-function formatBytes(b) {
-  if (b < 1024) return b + ' B';
-  if (b < 1048576) return (b/1024).toFixed(1) + ' KB';
-  return (b/1048576).toFixed(1) + ' MB';
-}
+  /* ===== RADIUS HISOBLASH ===== */
+  function recalcRadius() {
+    let f = CHAN_FREQ[S.channel - 1];
+    S.jamRadius = RF.getRadius(S.power, f);
+    els.mRad.textContent = S.jamRadius > 0 ? S.jamRadius.toFixed(1) : '0';
+    let sig = S.jamRadius > 0 ? RF.calcJam(S.jamRadius, S.power, f) : 0;
+    els.mSig.textContent = sig.toFixed(1);
+  }
 
-function resetSim() {
-  if (S.running) toggleSim();
-  S.power = 20; S.channel = 6; S.psize = 128; S.rate = 100; S.totalPkts = 0; S.totalBytes = 0;
-  document.getElementById('s-pwr').value = 20;
-  document.getElementById('s-ch').value  = 6;
-  document.getElementById('s-psize').value = 128;
-  document.getElementById('s-rate').value = 100;
-  document.getElementById('v-pwr').textContent = '20 dBm';
-  document.getElementById('v-ch').textContent  = 'CH 6 · 2437 MHz';
-  document.getElementById('v-psize').textContent = '128 bytes';
-  document.getElementById('v-rate').textContent = '100 pkt/s';
-  document.getElementById('m-rad').textContent = '—';
-  document.getElementById('m-sig').textContent = '—';
-  document.getElementById('m-pkt').textContent = '0';
-  document.getElementById('m-eff').textContent = '—';
-  logBuf = [];
-  logWrap.innerHTML = '';
-  chartData = [];
-  addLog('Tizim qayta ishga tushirildi.', 'info');
-  renderAPList();
-}
+  /* ===== AP LIST ===== */
+  function isJammed(ap) {
+    if (S.allCh) return ap.dist < S.jamRadius;
+    return ap.ch === S.channel && ap.dist < S.jamRadius;
+  }
 
-function scanAPs() {
-  addLog('━━━ TARMOQ SKANERLASH ━━━', 'info');
-  APS.forEach((ap, i) => {
-    setTimeout(() => {
-      const jammed = S.running && isJammed(ap);
-      addLog(`TOPILDI: ${ap.ssid} · ${ap.mac} · CH${ap.ch} · ${ap.dbm}dBm${jammed ? ' ⚠ JAMMED' : ''}`, jammed ? 'err' : 'ok');
-    }, i * 120);
-  });
-  setTimeout(() => addLog(`Jami: ${APS.length} tarmoq aniqlandi.`, 'dim'), APS.length * 120 + 100);
-}
-
-function exportLogs() {
-  const text = logBuf.map(l => l.replace(/<[^>]+>/g, '')).join('\n');
-  const blob = new Blob([text], { type: 'text/plain' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `rfsim_log_${new Date().toISOString().slice(0,19).replace(/[:-]/g,'')}.txt`;
-  a.click();
-  URL.revokeObjectURL(a.href);
-  addLog('Loglar eksport qilindi.', 'info');
-}
-
-function randMac() {
-  return Array(6).fill(0).map(() => Math.floor(Math.random()*256).toString(16).padStart(2,'0').toUpperCase()).join(':');
-}
-
-const targetScale = { v: 0 };
-
-function animate() {
-  requestAnimationFrame(animate);
-  const dt = Math.min(0.05, 0.016);
-  S.t += dt;
-
-  camera.position.x = Math.sin(S.t * 0.08) * 18;
-  camera.position.z = Math.cos(S.t * 0.08) * 18;
-  camera.position.y = 5 + Math.sin(S.t * 0.05) * 2;
-  camera.lookAt(0, -1, 0);
-
-  if (S.running) {
-    const freq = CHAN_FREQ[S.channel - 1];
-
-    if (S.adaptive) {
-      const jamCount = apMeshes.filter(m => isJammed(m._ap)).length;
-      const targetPwr = Math.min(40, 10 + jamCount * 4);
-      S.power += (targetPwr - S.power) * 0.02;
-      document.getElementById('s-pwr').value = Math.round(S.power);
-      document.getElementById('v-pwr').textContent = Math.round(S.power) + ' dBm';
-    }
-
-    S.jamRadius = WasmSim.getRadius(S.power, -85, freq);
-    const tgt = S.jamRadius / 10;
-    targetScale.v += (tgt - targetScale.v) * 0.05;
-
-    const pls = 1 + 0.03 * Math.sin(S.t * 12);
-    sphere.scale.setScalar(targetScale.v * pls);
-    inner.scale.setScalar(targetScale.v * 0.98);
-    sphereMat.opacity = 0.12 + 0.05 * Math.sin(S.t * 3);
-    innerMat.opacity  = 0.08;
-
-    waves.forEach((w, i) => {
-      const phase = (S.t * 1.5 + w._phase) % (Math.PI * 2);
-      const wScale = targetScale.v * (0.3 + phase / (Math.PI * 2) * 0.7);
-      w.scale.setScalar(wScale);
-      w.material.opacity = Math.max(0, 0.5 - phase / (Math.PI * 2) * 0.5);
+  function renderAPList() {
+    let html = '', jammed = 0;
+    APS.forEach(function(ap) {
+      let j = S.running && isJammed(ap);
+      if (j) jammed++;
+      let st = j ? 'jammed' : 'ok';
+      let sc = j ? 'bad' : 'good';
+      let sv = j ? Math.max(-95, ap.dbm - 30 - Math.random()*15).toFixed(0) : ap.dbm;
+      html += '<div class="ap-item"><div class="ap-icon '+st+'">'+(j?'✕':'⌘')+'</div><div class="ap-info"><div style="color:var(--text);font-size:.6rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+ap.ssid+'</div><div style="color:var(--text2);font-size:.5rem">'+ap.mac+' · CH'+ap.ch+'</div></div><div style="font-size:.55rem;text-align:right;color:'+(j?'var(--red)':'var(--green)')+'">'+sv+' dBm</div></div>';
     });
+    els.apList.innerHTML = html;
+    els.apCount.textContent = jammed+'/'+APS.length+' bloklangan';
+  }
 
-    const pos = pGeo.attributes.position.array;
-    for (let i = 0; i < PCOUNT; i++) {
-      const v = pVel[i];
-      v.r += v.speed;
-      if (v.r > targetScale.v) {
-        v.r = 0;
-        v.th = Math.random()*Math.PI*2;
-        v.ph = Math.acos(2*Math.random()-1);
+  /* ===== SPECTRUM ANALYZER ===== */
+  let specData = Array(13).fill(0).map(function(_,i){ return {freq:CHAN_FREQ[i], ch:i+1, power: -90 + Math.random()*15}; });
+  let sCtx;
+
+  function resizeSpec() {
+    if (!els.specCanvas || !els.specCanvas.parentElement) return;
+    let w = els.specCanvas.offsetWidth, h = els.specCanvas.offsetHeight;
+    if (w === 0 || h === 0) return;
+    els.specCanvas.width = w * devicePixelRatio;
+    els.specCanvas.height = h * devicePixelRatio;
+    sCtx = els.specCanvas.getContext('2d');
+    sCtx.scale(devicePixelRatio, devicePixelRatio);
+  }
+
+  function drawSpectrum() {
+    if (!sCtx) return;
+    let W = els.specCanvas.offsetWidth, H = els.specCanvas.offsetHeight;
+    if (W === 0 || H === 0) return;
+    sCtx.clearRect(0, 0, W, H);
+    let bg = sCtx.createLinearGradient(0,0,0,H);
+    bg.addColorStop(0, 'rgba(0,20,10,0.85)'); bg.addColorStop(1, 'rgba(2,5,8,0.95)');
+    sCtx.fillStyle = bg; sCtx.fillRect(0, 0, W, H);
+    sCtx.strokeStyle = 'rgba(0,200,120,0.2)'; sCtx.lineWidth = 1;
+    sCtx.beginPath(); sCtx.moveTo(0,0); sCtx.lineTo(W,0); sCtx.stroke();
+    let barW = W / 13, scale = H / 60;
+    specData.forEach(function(d, i) {
+      let norm = Math.max(0, Math.min(1, (d.power + 90) / 60));
+      let bH = norm * (H - 10);
+      let x = i * barW;
+      let isActive = S.running && (S.allCh || d.ch === S.channel);
+      let col = isActive ? 'rgba(255,60,90,'+(0.7+norm*0.3)+')' : 'rgba(0,232,122,'+(0.3+norm*0.5)+')';
+      let grad = sCtx.createLinearGradient(x, H-bH, x, H);
+      grad.addColorStop(0, col); grad.addColorStop(1, 'rgba(0,0,0,0)');
+      sCtx.fillStyle = grad; sCtx.fillRect(x+1, H-bH, barW-2, bH);
+      sCtx.strokeStyle = isActive ? 'rgba(255,60,90,0.9)' : 'rgba(0,232,122,0.6)';
+      sCtx.lineWidth = 1;
+      sCtx.beginPath(); sCtx.moveTo(x+2, H-bH); sCtx.lineTo(x+barW-2, H-bH); sCtx.stroke();
+      sCtx.fillStyle = 'rgba(90,120,140,0.8)';
+      sCtx.font = Math.max(7, barW*0.3)+'px monospace';
+      sCtx.textAlign = 'center'; sCtx.fillText(d.ch, x+barW/2, H-2);
+    });
+    sCtx.fillStyle = 'rgba(0,207,255,0.5)';
+    sCtx.font = '8px monospace'; sCtx.textAlign = 'left'; sCtx.fillText('2.4 GHz SPECTRUM', 4, 9);
+  }
+
+  /* ===== CHART ===== */
+  let chartCtx;
+
+  function resizeChart() {
+    if (!els.chartCanvas || !els.chartCanvas.parentElement) return;
+    let w = els.chartCanvas.offsetWidth, h = els.chartCanvas.offsetHeight;
+    if (w === 0 || h === 0) return;
+    els.chartCanvas.width = w * devicePixelRatio;
+    els.chartCanvas.height = h * devicePixelRatio;
+    chartCtx = els.chartCanvas.getContext('2d');
+    chartCtx.scale(devicePixelRatio, devicePixelRatio);
+  }
+
+  function drawChart() {
+    if (!chartCtx) return;
+    let W = els.chartCanvas.offsetWidth, H = els.chartCanvas.offsetHeight;
+    if (W === 0 || H === 0) return;
+    chartCtx.clearRect(0, 0, W, H);
+    let data = S.chartData;
+    if (data.length < 2) return;
+    let maxVal = 1;
+    for (let i = 0; i < data.length; i++) if (data[i] > maxVal) maxVal = data[i];
+    let mid = H / 2;
+    chartCtx.strokeStyle = 'rgba(0,200,120,0.1)';
+    chartCtx.beginPath(); chartCtx.moveTo(0, mid); chartCtx.lineTo(W, mid); chartCtx.stroke();
+    chartCtx.fillStyle = 'rgba(0,207,255,0.3)';
+    chartCtx.font = '7px monospace'; chartCtx.textAlign = 'left'; chartCtx.fillText('TX', 2, 7);
+    chartCtx.beginPath();
+    chartCtx.moveTo(0, mid);
+    for (let i = 0; i < data.length; i++) {
+      let x = (i / (data.length - 1)) * W;
+      let y = mid - (data[i] / maxVal) * (mid - 3);
+      chartCtx.lineTo(x, y);
+    }
+    chartCtx.strokeStyle = S.running ? '#ff3c5a' : '#00e87a';
+    chartCtx.lineWidth = 1.5;
+    chartCtx.stroke();
+    let grad = chartCtx.createLinearGradient(0, 0, 0, H);
+    grad.addColorStop(0, S.running ? 'rgba(255,60,90,0.15)' : 'rgba(0,232,122,0.15)');
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
+    chartCtx.fillStyle = grad;
+    chartCtx.beginPath(); chartCtx.moveTo(0, mid);
+    for (let i = 0; i < data.length; i++) {
+      let x = (i / (data.length - 1)) * W;
+      let y = mid - (data[i] / maxVal) * (mid - 3);
+      chartCtx.lineTo(x, y);
+    }
+    chartCtx.lineTo(W, mid); chartCtx.closePath(); chartCtx.fill();
+  }
+
+  /* ===== THREE.JS SETUP ===== */
+  let renderer, scene, camera, sphere, sphereMat, inner, innerMat, waves, particles, pPos, pVel, pMat, pGeo, apMeshes, jamGrp, led, jamLight, gRing;
+  let threeReady = false;
+
+  function initThree() {
+    if (typeof THREE === 'undefined') {
+      console.warn('Three.js yuklanmadi, 2D rejimda ishlaydi');
+      return;
+    }
+    try {
+      renderer = new THREE.WebGLRenderer({ canvas: els.threeCanvas, antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+      renderer.setClearColor(0x020508);
+      scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x020810, 0.025);
+      camera = new THREE.PerspectiveCamera(55, 1, 0.1, 800);
+      camera.position.set(0, 6, 16);
+      camera.lookAt(0, 0, 0);
+      scene.add(new THREE.AmbientLight(0x112233, 0.6));
+      let sun = new THREE.DirectionalLight(0x334455, 0.8);
+      sun.position.set(10, 20, 10);
+      scene.add(sun);
+      jamLight = new THREE.PointLight(0x00e87a, 0, 30);
+      scene.add(jamLight);
+      let grid = new THREE.GridHelper(60, 60, 0x0a1e2e, 0x080f1a);
+      grid.position.y = -2.5;
+      scene.add(grid);
+
+      gRing = new THREE.Mesh(new THREE.RingGeometry(0.3, 0.5, 64), new THREE.MeshBasicMaterial({color:0x00e87a,side:THREE.DoubleSide,transparent:true,opacity:0.4}));
+      gRing.rotation.x = -Math.PI/2;
+      gRing.position.y = -2.49;
+      scene.add(gRing);
+
+      jamGrp = new THREE.Group();
+      jamGrp.add(new THREE.Mesh(new THREE.BoxGeometry(0.6,0.15,0.4), new THREE.MeshStandardMaterial({color:0x1a2a3a,metalness:0.8,roughness:0.3})));
+      [-0.25,0,0.25].forEach(function(x,i){
+        jamGrp.add(new THREE.Mesh(new THREE.CylinderGeometry(0.025,0.025,0.5+i*0.1,8), new THREE.MeshStandardMaterial({color:0x334455,metalness:1,roughness:0.2})));
+        jamGrp.children[jamGrp.children.length-1].position.set(x,0.32+i*0.05,0);
+      });
+      led = new THREE.Mesh(new THREE.SphereGeometry(0.04,8,8), new THREE.MeshStandardMaterial({color:0x00e87a,emissive:0x00e87a,emissiveIntensity:0}));
+      led.position.set(0.25,0.1,0.21);
+      jamGrp.add(led);
+      jamGrp.position.y = -2;
+      scene.add(jamGrp);
+
+      sphereMat = new THREE.MeshStandardMaterial({color:0x00e87a,wireframe:true,transparent:true,opacity:0,emissive:0x00ff44,emissiveIntensity:0.3});
+      sphere = new THREE.Mesh(new THREE.SphereGeometry(1,64,64), sphereMat);
+      scene.add(sphere);
+
+      innerMat = new THREE.MeshStandardMaterial({color:0x001808,transparent:true,opacity:0,side:THREE.BackSide});
+      inner = new THREE.Mesh(new THREE.SphereGeometry(1,32,32), innerMat);
+      scene.add(inner);
+
+      waves = [];
+      for (let i=0;i<4;i++) {
+        let r = new THREE.Mesh(new THREE.TorusGeometry(1,0.015,8,80), new THREE.MeshBasicMaterial({color:0x00e87a,transparent:true,opacity:0}));
+        r.rotation.x = Math.random()*Math.PI; r.rotation.z = Math.random()*Math.PI;
+        r._phase = i*(Math.PI*2/4);
+        scene.add(r); waves.push(r);
       }
-      pos[i*3]   = Math.sin(v.ph)*Math.cos(v.th)*v.r*10;
-      pos[i*3+1] = Math.cos(v.ph)*v.r*10 - 2;
-      pos[i*3+2] = Math.sin(v.ph)*Math.sin(v.th)*v.r*10;
-      const c = S.running ? 1 : 0.5;
-      pCol[i*3] = c; pCol[i*3+1] = c * 0.7; pCol[i*3+2] = c * 0.3;
+
+      let PCOUNT = 600;
+      pGeo = new THREE.BufferGeometry();
+      pPos = new Float32Array(PCOUNT*3);
+      pVel = Array.from({length:PCOUNT},function(){return {th:Math.random()*Math.PI*2,ph:Math.acos(2*Math.random()-1),r:Math.random(),speed:0.005+Math.random()*0.03,life:Math.random()};});
+      pGeo.setAttribute('position', new THREE.BufferAttribute(pPos,3));
+      pMat = new THREE.PointsMaterial({color:0x00e87a,size:0.05,transparent:true,opacity:0});
+      particles = new THREE.Points(pGeo, pMat);
+      scene.add(particles);
+
+      apMeshes = [];
+      let apGeo = new THREE.CylinderGeometry(0.12,0.18,0.25,8);
+      let apTop = new THREE.CylinderGeometry(0.04,0.04,0.3,6);
+      APS.forEach(function(ap){
+        let g = new THREE.Group();
+        g.add(new THREE.Mesh(apGeo, new THREE.MeshStandardMaterial({color:0x1a2a3a,metalness:0.7,roughness:0.4})));
+        let a = new THREE.Mesh(apTop, new THREE.MeshStandardMaterial({color:0x223344,metalness:0.9,roughness:0.2}));
+        a.position.y = 0.28; g.add(a);
+        let l = new THREE.Mesh(new THREE.SphereGeometry(0.035,6,6), new THREE.MeshStandardMaterial({color:0x00e87a,emissive:0x00e87a,emissiveIntensity:1}));
+        l.position.set(0.13,0.05,0.13); g.add(l);
+        g.position.set(ap.x, -2.38, ap.z);
+        g._led = l; g._ap = ap;
+        scene.add(g); apMeshes.push(g);
+      });
+      threeReady = true;
+      resizeThree();
+    } catch(e) {
+      console.warn('Three.js init xatosi:', e);
     }
-    pGeo.attributes.position.needsUpdate = true;
-    pGeo.attributes.color.needsUpdate = true;
-    pMat.opacity = 0.7;
+  }
 
-    jamLight.intensity = 1.5 + Math.sin(S.t * 8) * 0.8;
-    jamLight.color.setHSL(0.35, 1, 0.5 + 0.1 * Math.sin(S.t * 4));
+  function resizeThree() {
+    if (!threeReady || !renderer) return;
+    let w = els.center.clientWidth, h = els.center.clientHeight;
+    if (w===0||h===0) return;
+    renderer.setSize(w, h);
+    camera.aspect = w/h;
+    camera.updateProjectionMatrix();
+  }
 
-    led.material.emissiveIntensity = 0.5 + 0.5 * Math.sin(S.t * 10);
+  /* ===== ANIMATION LOOP ===== */
+  let targetScale = {v:0};
+  let animId = null;
 
-    let jammedCount = 0;
-    apMeshes.forEach(m => {
-      const j = isJammed(m._ap);
-      if (j) jammedCount++;
-      m._led.material.color.setHex(j ? 0xff3c5a : 0x00e87a);
-      m._led.material.emissive.setHex(j ? 0xff1133 : 0x00e87a);
-      m._led.material.emissiveIntensity = j ? (0.5 + 0.5*Math.sin(S.t*15+m._ap.dist)) : 0.8;
+  function animate(time) {
+    animId = requestAnimationFrame(animate);
+    let dt = 0.016;
+    S.t += dt;
+
+    if (threeReady && camera) {
+      camera.position.x = Math.sin(S.t*0.08)*18;
+      camera.position.z = Math.cos(S.t*0.08)*18;
+      camera.position.y = 5+Math.sin(S.t*0.05)*2;
+      camera.lookAt(0,-1,0);
+    }
+
+    if (S.running) {
+      let freq = CHAN_FREQ[S.channel-1];
+
+      if (S.adaptive) {
+        let jc = 0; apMeshes.forEach(function(m){if(isJammed(m._ap)) jc++;});
+        let tp = Math.min(40, 10+jc*4);
+        S.power += (tp-S.power)*0.02;
+        els.sPwr.value = Math.round(S.power);
+        els.vPwr.textContent = Math.round(S.power)+' dBm';
+      }
+
+      S.jamRadius = RF.getRadius(S.power, freq);
+      let tgt = S.jamRadius/10;
+      targetScale.v += (tgt-targetScale.v)*0.05;
+
+      if (threeReady && sphere) {
+        let pls = 1+0.03*Math.sin(S.t*12);
+        sphere.scale.setScalar(targetScale.v*pls);
+        if (inner) inner.scale.setScalar(targetScale.v*0.98);
+        sphereMat.opacity = 0.12+0.05*Math.sin(S.t*3);
+        if (innerMat) innerMat.opacity = 0.08;
+
+        waves.forEach(function(w,i){
+          let ph = (S.t*1.5+w._phase)%(Math.PI*2);
+          let ws = targetScale.v*(0.3+ph/(Math.PI*2)*0.7);
+          w.scale.setScalar(ws);
+          w.material.opacity = Math.max(0, 0.5-ph/(Math.PI*2)*0.5);
+        });
+
+        if (pPos && pVel) {
+          let pos = pPos;
+          for (let i=0;i<pVel.length;i++) {
+            let v = pVel[i];
+            v.r += v.speed;
+            if (v.r>targetScale.v) { v.r=0; v.th=Math.random()*Math.PI*2; v.ph=Math.acos(2*Math.random()-1); }
+            pos[i*3] = Math.sin(v.ph)*Math.cos(v.th)*v.r*10;
+            pos[i*3+1] = Math.cos(v.ph)*v.r*10 - 2;
+            pos[i*3+2] = Math.sin(v.ph)*Math.sin(v.th)*v.r*10;
+          }
+          pGeo.attributes.position.needsUpdate = true;
+        }
+        if (pMat) pMat.opacity = 0.7;
+        if (jamLight) { jamLight.intensity = 1.5+Math.sin(S.t*8)*0.8; jamLight.color.setHSL(0.35,1,0.5+0.1*Math.sin(S.t*4)); }
+        if (led) led.material.emissiveIntensity = 0.5+0.5*Math.sin(S.t*10);
+
+        let jammedCount = 0;
+        apMeshes.forEach(function(m){
+          let j = isJammed(m._ap);
+          if (j) jammedCount++;
+          m._led.material.color.setHex(j?0xff3c5a:0x00e87a);
+          m._led.material.emissive.setHex(j?0xff1133:0x00e87a);
+          m._led.material.emissiveIntensity = j?(0.5+0.5*Math.sin(S.t*15+m._ap.dist)):0.8;
+        });
+      }
+
+      S.totalPkts += Math.floor(S.rate*dt);
+      let pktD = S.totalPkts >= 1e6 ? (S.totalPkts/1e6).toFixed(1)+'M' : S.totalPkts.toLocaleString();
+      els.mPkt.textContent = pktD;
+
+      let jc2 = 0; APS.forEach(function(ap){if(isJammed(ap)) jc2++;});
+      let eff = jc2>0 ? Math.round((jc2/APS.length)*100) : 0;
+      S.efficiency += (eff - S.efficiency)*0.1;
+      els.mEff.textContent = Math.round(S.efficiency)+'%';
+
+      S.chartData.push(S.rate);
+      if (S.chartData.length > 80) S.chartData.shift();
+
+      els.mRad.textContent = S.jamRadius.toFixed(1);
+      els.mSig.textContent = RF.calcJam(S.jamRadius, S.power, freq).toFixed(1);
+
+      S.logTimer += dt;
+      if (S.logTimer > 2.5) {
+        S.logTimer = 0;
+        addLog('TX: '+Math.floor(S.rate*2.5).toLocaleString()+' frame · Jammed: '+jc2+'/'+APS.length+' · Eff: '+Math.round(S.efficiency)+'%', 'ok');
+      }
+
+      specData.forEach(function(d,i){
+        let active = S.allCh || d.ch === S.channel;
+        let target = active ? -30+Math.random()*12 : -90+Math.random()*20;
+        d.power += (target-d.power)*0.1;
+      });
+    } else {
+      targetScale.v += (0-targetScale.v)*0.05;
+      if (threeReady && sphere) {
+        sphere.scale.setScalar(Math.max(0,targetScale.v));
+        if (inner) inner.scale.setScalar(Math.max(0,targetScale.v));
+        sphereMat.opacity = targetScale.v*0.12;
+        if (innerMat) innerMat.opacity = targetScale.v*0.08;
+        waves.forEach(function(w){w.material.opacity=0;});
+        if (pMat) pMat.opacity = 0;
+        if (jamLight) jamLight.intensity = 0;
+        if (led) led.material.emissiveIntensity = 0.15;
+        apMeshes.forEach(function(m){m._led.material.color.setHex(0x00e87a); m._led.material.emissive.setHex(0x00e87a); m._led.material.emissiveIntensity=0.8;});
+      }
+      specData.forEach(function(d){d.power += (-85+Math.random()*12-d.power)*0.05;});
+    }
+
+    if (threeReady && jamGrp) jamGrp.rotation.y = S.t*0.4;
+    if (threeReady && gRing) gRing.material.opacity = 0.3+0.2*Math.sin(S.t*2);
+
+    S.scanTimer += dt;
+    if (S.scanTimer > 1) { S.scanTimer = 0; renderAPList(); }
+
+    S.fCount++;
+    S.fpsTimer += dt;
+    if (S.fpsTimer >= 0.5) {
+      S.fps = Math.round(S.fCount/S.fpsTimer);
+      S.fCount = 0; S.fpsTimer = 0;
+      els.oFps.textContent = S.fps+' FPS';
+    }
+
+    drawSpectrum();
+    drawChart();
+    if (threeReady && renderer && scene && camera) renderer.render(scene, camera);
+  }
+
+  /* ===== UI CONTROLS ===== */
+  function updatePwr(v) {
+    S.power = +v;
+    els.vPwr.textContent = v+' dBm';
+    recalcRadius();
+    if (S.running) addLog('Quvvat: '+v+' dBm → radius: '+S.jamRadius.toFixed(1)+'m', 'ok');
+  }
+
+  function updateCh(v) {
+    S.channel = +v;
+    let freq = CHAN_FREQ[S.channel-1];
+    els.vCh.textContent = 'CH '+v+' · '+freq+' MHz';
+    els.oFreq.textContent = freq+' MHz · CH'+v;
+    recalcRadius();
+    if (S.running) addLog('Kanal: CH'+v+' ('+freq+' MHz)', 'warn');
+  }
+
+  function updateRate(v) {
+    S.rate = +v;
+    els.vRate.textContent = v+' pkt/s';
+    if (S.running) addLog('Tezlik: '+v+' pkt/s', 'ok');
+  }
+
+  function toggleSim() {
+    S.running = !S.running;
+    els.mainBtn.textContent = S.running ? '⏸ STOP' : '▶ START';
+    els.mainBtn.className = S.running ? 'btn btn-red' : 'btn btn-green';
+    els.statusDot.className = 'status-dot'+(S.running?' live':'');
+    els.statusTxt.textContent = S.running ? 'AKTIV' : 'STANDBY';
+    els.oMode.textContent = S.running ? 'REJIM: INTERFERENSIYA' : 'REJIM: KUTISH';
+    els.oMode.style.color = S.running ? '#ff3c5a' : '#5a7a8a';
+    recalcRadius();
+    if (S.running) {
+      addLog('━━━ SIMULYATSIYA BOSHLANDI ━━━', 'warn');
+      addLog('Hujum: '+ATTACK_NAMES[S.attack]+' · Quvvat: '+S.power+'dBm · Kanal: CH'+S.channel, 'ok');
+      addLog('Target: '+(S.broadcast?'BROADCAST':'UNICAST'), 'ok');
+      if (S.macSpoof) addLog('MAC spoof: '+randMac(), 'ok');
+      addLog('Samaradorlik radiusi: '+S.jamRadius.toFixed(1)+'m', 'ok');
+      S.totalPkts = 0; S.chartData = [];
+    } else {
+      addLog('━━━ TO\'XTATILDI ━━━', 'info');
+      addLog('Jami: '+S.totalPkts.toLocaleString()+' paket', 'dim');
+    }
+    renderAPList();
+  }
+
+  function randMac() {
+    let r=[]; for(let i=0;i<6;i++) r.push(Math.floor(Math.random()*256).toString(16).padStart(2,'0').toUpperCase());
+    return r.join(':');
+  }
+
+  function resetSim() {
+    if (S.running) toggleSim();
+    S.power=20; S.channel=6; S.rate=100; S.totalPkts=0;
+    els.sPwr.value=20; els.sCh.value=6; els.sRate.value=100;
+    els.vPwr.textContent='20 dBm'; els.vCh.textContent='CH 6 · 2437 MHz'; els.vRate.textContent='100 pkt/s';
+    els.mRad.textContent='—'; els.mSig.textContent='—'; els.mPkt.textContent='0'; els.mEff.textContent='—';
+    logBuf=[]; els.logWrap.innerHTML=''; S.chartData=[];
+    addLog('Tizim qayta ishga tushirildi.', 'info');
+    renderAPList();
+  }
+
+  function scanAPs() {
+    addLog('━━━ SKANERLASH ━━━', 'info');
+    APS.forEach(function(ap,i){
+      setTimeout(function(){
+        let j = S.running && isJammed(ap);
+        addLog('TOPILDI: '+ap.ssid+' · '+ap.mac+' · CH'+ap.ch+' · '+ap.dbm+'dBm'+(j?' ⚠':' '), j?'err':'ok');
+      }, i*120);
+    });
+    setTimeout(function(){addLog('Jami: '+APS.length+' tarmoq.', 'dim');}, APS.length*120+100);
+  }
+
+  function exportLogs() {
+    let t = logBuf.map(function(l){return l.replace(/<[^>]+>/g,'');}).join('\n');
+    let b = new Blob([t], {type:'text/plain'});
+    let a = document.createElement('a');
+    a.href = URL.createObjectURL(b);
+    a.download = 'rfsim_'+new Date().toISOString().slice(0,19).replace(/[:-]/g,'')+'.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+    addLog('Loglar eksport qilindi.', 'info');
+  }
+
+  /* ===== EVENT REGISTRATION ===== */
+  function init() {
+    els.acceptBtn.addEventListener('click', function(){
+      els.modal.style.display = 'none';
+      resizeThree(); resizeSpec(); resizeChart();
+      renderAPList();
+      addLog('Sistema tayyor. Three.js sahna boshlandi ✓', 'info');
+      addLog('802.11 simulator yuklandi ✓', 'ok');
+      addLog('"▶ START" tugmasini bosing.', 'dim');
+      animate();
     });
 
-    const pktsThisFrame = Math.floor(S.rate * dt);
-    S.totalPkts += pktsThisFrame;
-    S.totalBytes += pktsThisFrame * S.psize;
-
-    const pktDisplay = S.totalPkts >= 1e6
-      ? (S.totalPkts/1e6).toFixed(1)+'M'
-      : S.totalPkts.toLocaleString();
-    document.getElementById('m-pkt').textContent = pktDisplay;
-
-    const allJammed = APS.every(ap => isJammed(ap));
-    const eff = allJammed ? 100 : jammedCount > 0 ? Math.round((jammedCount/APS.length)*100) : 0;
-    S.efficiency += (eff - S.efficiency) * 0.1;
-    document.getElementById('m-eff').textContent = Math.round(S.efficiency) + '%';
-
-    S.throughputs.push(S.rate * S.psize * 8 / 1e6);
-    if (S.throughputs.length > 100) S.throughputs.shift();
-
-    chartData.push(S.rate);
-    if (chartData.length > 80) chartData.shift();
-
-    document.getElementById('m-rad').textContent = S.jamRadius.toFixed(1);
-    document.getElementById('m-sig').textContent = WasmSim.calcJam(S.jamRadius, S.power, freq).toFixed(1);
-
-    S.logTimer += dt;
-    if (S.logTimer > 2.5) {
-      S.logTimer = 0;
-      const n = WasmSim.deauthPkts(2500, S.rate);
-      addLog(`TX: ${n.toLocaleString()} frame · Jammed: ${jammedCount}/${APS.length} · Eff: ${Math.round(S.efficiency)}%`, 'ok');
-    }
-
-    specData.forEach((d, i) => {
-      const active = S.allCh || d.ch === S.channel;
-      const target = active ? -30 + Math.random()*12 : -90 + Math.random()*20;
-      d.power += (target - d.power) * 0.1;
+    els.sPwr.addEventListener('input', function(){updatePwr(this.value);});
+    els.sCh.addEventListener('input', function(){updateCh(this.value);});
+    els.sRate.addEventListener('input', function(){updateRate(this.value);});
+    els.sAttack.addEventListener('change', function(){
+      S.attack = this.value;
+      if (S.running) addLog('Hujum: '+ATTACK_NAMES[S.attack], 'warn');
     });
+
+    els.tAllCh.addEventListener('change', function(){S.allCh = this.checked;});
+    els.tMac.addEventListener('change', function(){S.macSpoof = this.checked;});
+    els.tBc.addEventListener('change', function(){S.broadcast = this.checked;});
+    els.tAdaptive.addEventListener('change', function(){S.adaptive = this.checked;});
+
+    els.mainBtn.addEventListener('click', toggleSim);
+    els.resetBtn.addEventListener('click', resetSim);
+    els.scanBtn.addEventListener('click', scanAPs);
+    els.exportBtn.addEventListener('click', exportLogs);
+
+    els.menuBtn.addEventListener('click', function(){
+      if (els.sidebar.classList.contains('open')) { closeMenus(); return; }
+      closeMenus();
+      els.sidebar.classList.add('open');
+      els.mobOverlay.classList.add('show');
+    });
+
+    els.mobOverlay.addEventListener('click', closeMenus);
+
+    els.tabs.forEach(function(tab){
+      tab.addEventListener('click', function(){
+        els.tabs.forEach(function(t){t.classList.remove('active');});
+        tab.classList.add('active');
+        els.sbContents.forEach(function(c){c.style.display='none';});
+        var tgt = document.getElementById(tab.dataset.tab);
+        if (tgt) tgt.style.display = 'block';
+      });
+    });
+
+    let rLong;
+    els.center.addEventListener('touchstart', function(){rLong=setTimeout(function(){closeMenus(); els.rpanel.classList.add('open'); els.mobOverlay.classList.add('show');},600);});
+    els.center.addEventListener('touchend', function(){clearTimeout(rLong);});
+
+    window.addEventListener('resize', function(){resizeThree(); resizeSpec(); resizeChart();});
+
+    setTimeout(function(){resizeThree(); resizeSpec(); resizeChart();}, 100);
+  }
+
+  function closeMenus() {
+    els.sidebar.classList.remove('open');
+    els.rpanel.classList.remove('open');
+    els.mobOverlay.classList.remove('show');
+  }
+
+  /* ===== START ===== */
+  initThree();
+  if (typeof THREE !== 'undefined') {
+    init();
   } else {
-    targetScale.v += (0 - targetScale.v) * 0.05;
-    sphere.scale.setScalar(Math.max(0, targetScale.v));
-    inner.scale.setScalar(Math.max(0, targetScale.v));
-    sphereMat.opacity = targetScale.v * 0.12;
-    innerMat.opacity  = targetScale.v * 0.08;
-    waves.forEach(w => { w.material.opacity = 0; });
-    pMat.opacity = 0;
-    jamLight.intensity = 0;
-    led.material.emissiveIntensity = 0.15;
-    apMeshes.forEach(m => {
-      m._led.material.color.setHex(0x00e87a);
-      m._led.material.emissive.setHex(0x00e87a);
-      m._led.material.emissiveIntensity = 0.8;
-    });
-    specData.forEach(d => { d.power += (-85 + Math.random()*12 - d.power) * 0.05; });
+    console.log('Three.js yuklanmoqda...');
+    var checkThree = setInterval(function(){
+      if (typeof THREE !== 'undefined') {
+        clearInterval(checkThree);
+        initThree();
+        init();
+      }
+    }, 100);
   }
-
-  jamGrp.rotation.y = S.t * 0.4;
-  gRing.material.opacity = 0.3 + 0.2 * Math.sin(S.t * 2);
-
-  S.scanTimer += dt;
-  if (S.scanTimer > 1) { S.scanTimer = 0; renderAPList(); }
-
-  S.frameCount++;
-  S.fpsTimer += dt;
-  if (S.fpsTimer >= 0.5) {
-    S.fps = Math.round(S.frameCount / S.fpsTimer);
-    S.frameCount = 0;
-    S.fpsTimer = 0;
-    if (S.running) document.getElementById('o-fps').textContent = S.fps + ' FPS';
-  }
-
-  drawSpectrum();
-  drawChart();
-  renderer.render(scene, camera);
-}
-
-function sbTab(btn, tabId) {
-  document.querySelectorAll('.sb-tab').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  ['tab-ctrl', 'tab-ap', 'tab-code'].forEach(id => {
-    document.getElementById(id).style.display = id === tabId ? 'block' : 'none';
-  });
-}
-
-let menuState = null;
-
-function toggleMenu() {
-  if (menuState === 'left') { closeMenus(); return; }
-  closeMenus();
-  document.getElementById('sidebar').classList.add('open');
-  document.getElementById('mob-overlay').classList.add('show');
-  menuState = 'left';
-}
-
-function closeMenus() {
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('rpanel').classList.remove('open');
-  document.getElementById('mob-overlay').classList.remove('show');
-  menuState = null;
-}
-
-let rLong;
-document.getElementById('center').addEventListener('touchstart', () => {
-  rLong = setTimeout(() => {
-    closeMenus();
-    document.getElementById('rpanel').classList.add('open');
-    document.getElementById('mob-overlay').classList.add('show');
-    menuState = 'right';
-  }, 600);
-});
-document.getElementById('center').addEventListener('touchend', () => clearTimeout(rLong));
-
-function acceptDisclaimer() {
-  document.getElementById('modal').style.display = 'none';
-  resizeRenderer();
-  resizeSpec();
-  resizeChart();
-  renderAPList();
-  addLog('Sistema tayyor. WASM moduli yuklandi ✓', 'info');
-  addLog('Three.js sahna boshlandi ✓', 'info');
-  addLog('802.11 frame builder tayyor ✓', 'ok');
-  addLog('802.11ac modulyatsiya qo\'llab-quvvatlanadi ✓', 'info');
-  addLog('Simulyatsiya uchun "▶ START" tugmasini bosing.', 'dim');
-  animate();
-}
-
-setTimeout(() => { resizeRenderer(); resizeSpec(); resizeChart(); }, 50);
+})();
 </script>
 </body>
 </html>
