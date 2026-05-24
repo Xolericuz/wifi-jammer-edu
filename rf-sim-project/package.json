@@ -1,0 +1,10 @@
+{
+  "name": "rf-sim-project",
+  "version": "2.0.0",
+  "description": "RF Interference Simulator — Full Pipeline (HTML + Three.js + WASM/C++)",
+  "scripts": {
+    "wasm": "make wasm",
+    "serve": "make serve",
+    "clean": "make clean"
+  }
+}
